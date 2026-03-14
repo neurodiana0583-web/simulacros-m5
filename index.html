@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacros M5 — Trastornos del Lenguaje</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #f7f4ef;
+    --bg2:      #ffffff;
+    --bg3:      #ede9e1;
+    --blue:     #1a4f9c;
+    --blue2:    #2563c4;
+    --blue3:    #dbeafe;
+    --orange:   #d4620a;
+    --orange2:  #f07820;
+    --orange3:  #fff0e0;
+    --text:     #1a1a2e;
+    --text2:    #4a4a6a;
+    --muted:    #9090aa;
+    --border:   #e2ddd4;
+    --green:    #1a8a5a;
+    --green2:   #e8f8f0;
+    --red:      #c0392b;
+    --red2:     #fde8e6;
+    --shadow:   0 2px 16px rgba(26,79,156,.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* HEADER */
+  .header {
+    background: var(--blue);
+    padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 58px; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(26,79,156,.25);
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .header-tag {
+    background: var(--orange);
+    color: #fff; font-family: 'Fraunces', serif;
+    font-size: 1rem; font-weight: 900; letter-spacing: .04em;
+    padding: 4px 14px; border-radius: 6px;
+  }
+  .header-title { font-family: 'Fraunces', serif; font-size: 1.05rem; color: #fff; font-weight: 700; }
+  .header-sub { font-size: .72rem; color: rgba(255,255,255,.65); margin-top: 1px; }
+  .header-badge {
+    background: rgba(255,255,255,.15);
+    color: #fff; font-size: .72rem; padding: 4px 12px;
+    border-radius: 20px; letter-spacing: .06em; font-weight: 500;
+    border: 1px solid rgba(255,255,255,.25);
+  }
+
+  /* HOME */
+  #home { max-width: 840px; margin: 0 auto; padding: 52px 24px; }
+  .home-hero { margin-bottom: 52px; display: flex; align-items: flex-start; gap: 40px; }
+  .hero-text { flex: 1; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--orange3); color: var(--orange);
+    font-size: .75rem; font-weight: 600; padding: 5px 14px;
+    border-radius: 20px; margin-bottom: 18px;
+    border: 1px solid rgba(212,98,10,.2);
+    text-transform: uppercase; letter-spacing: .08em;
+  }
+  .home-hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 3rem; line-height: 1.1; color: var(--blue); font-weight: 900;
+  }
+  .home-hero h1 em { color: var(--orange); font-style: italic; }
+  .home-hero p { color: var(--text2); font-size: .95rem; margin-top: 16px; line-height: 1.7; font-weight: 300; max-width: 480px; }
+  .hero-deco {
+    width: 120px; height: 120px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--blue3), var(--orange3));
+    border-radius: 24px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-size: 3rem; color: var(--blue);
+    font-weight: 900; margin-top: 8px;
+    box-shadow: var(--shadow);
+  }
+
+  .sim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap: 16px; }
+  .sim-card {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 16px; padding: 26px 22px;
+    cursor: pointer; transition: all .22s ease;
+    box-shadow: var(--shadow);
+    position: relative; overflow: hidden;
+  }
+  .sim-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--blue), var(--orange));
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .22s ease;
+  }
+  .sim-card:hover { border-color: var(--blue2); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(26,79,156,.15); }
+  .sim-card:hover::before { transform: scaleX(1); }
+  .sim-icon { font-size: 1.6rem; margin-bottom: 10px; }
+  .sim-num { font-family: 'Fraunces', serif; font-size: .78rem; font-weight: 700; color: var(--orange); text-transform: uppercase; letter-spacing: .12em; }
+  .sim-label { font-size: 1.05rem; font-weight: 600; color: var(--blue); margin-top: 4px; }
+  .sim-count { font-size: .76rem; color: var(--muted); margin-top: 6px; }
+  .sim-score-badge { display: none; margin-top: 10px; font-size: .75rem; font-weight: 600; padding: 4px 12px; border-radius: 20px; width: fit-content; }
+  .sim-score-badge.shown { display: inline-block; }
+  .sim-score-badge.pass { background: var(--green2); color: var(--green); border: 1px solid rgba(26,138,90,.3); }
+  .sim-score-badge.fail { background: var(--red2); color: var(--red); border: 1px solid rgba(192,57,43,.3); }
+  .sim-score-badge.partial { background: var(--orange3); color: var(--orange); border: 1px solid rgba(212,98,10,.3); }
+
+  /* QUIZ */
+  #quiz { display: none; max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+  .quiz-nav { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .btn-back {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    color: var(--text2); padding: 8px 16px; border-radius: 8px;
+    cursor: pointer; font-size: .82rem; transition: .18s;
+    font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500;
+    box-shadow: var(--shadow);
+  }
+  .btn-back:hover { border-color: var(--blue); color: var(--blue); }
+  .quiz-title { font-family: 'Fraunces', serif; font-size: 1.2rem; color: var(--blue); font-weight: 700; flex: 1; }
+
+  .progress-wrap { margin-bottom: 28px; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: .76rem; color: var(--muted); margin-bottom: 8px; font-weight: 500; }
+  .progress-bar { height: 6px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--orange)); border-radius: 4px; transition: width .4s ease; }
+
+  .q-card {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 18px; padding: 34px 30px; margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .q-number {
+    display: inline-flex; align-items: center;
+    background: var(--blue3); color: var(--blue);
+    font-size: .72rem; font-weight: 700; padding: 4px 12px;
+    border-radius: 20px; text-transform: uppercase; letter-spacing: .1em;
+    margin-bottom: 16px;
+  }
+  .q-text { font-size: 1.05rem; line-height: 1.72; color: var(--text); margin-bottom: 28px; font-weight: 400; }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 14px 18px;
+    cursor: pointer; text-align: left;
+    color: var(--text); font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: .92rem; line-height: 1.55; transition: all .17s ease;
+  }
+  .opt-btn:hover:not(:disabled) { border-color: var(--blue2); background: var(--blue3); }
+  .opt-btn:disabled { cursor: default; }
+  .opt-letter {
+    min-width: 28px; height: 28px; border-radius: 8px;
+    background: var(--bg3); color: var(--text2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; font-weight: 700; letter-spacing: .05em;
+    flex-shrink: 0; margin-top: 1px; transition: .17s;
+  }
+  .opt-btn.selected-correct { border-color: var(--green); background: var(--green2); }
+  .opt-btn.selected-correct .opt-letter { background: var(--green); color: #fff; }
+  .opt-btn.selected-wrong { border-color: var(--red); background: var(--red2); }
+  .opt-btn.selected-wrong .opt-letter { background: var(--red); color: #fff; }
+  .opt-btn.show-correct { border-color: var(--green); background: var(--green2); opacity: .7; }
+  .opt-btn.show-correct .opt-letter { background: var(--green); color: #fff; }
+
+  .feedback-box {
+    display: none; margin-top: 16px; padding: 16px 20px;
+    border-radius: 12px; font-size: .88rem; line-height: 1.65;
+    animation: fadeUp .28s ease;
+  }
+  .feedback-box.correct { background: var(--green2); border: 1.5px solid rgba(26,138,90,.3); color: #0f6040; }
+  .feedback-box.wrong { background: var(--red2); border: 1.5px solid rgba(192,57,43,.3); color: #9a2020; }
+  .feedback-ref { font-size: .78rem; margin-top: 6px; opacity: .65; font-style: italic; }
+
+  .quiz-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .btn-primary {
+    background: var(--blue); color: #fff; border: none;
+    padding: 12px 28px; border-radius: 10px; cursor: pointer;
+    font-size: .9rem; font-weight: 600; transition: .18s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    box-shadow: 0 4px 14px rgba(26,79,156,.3);
+  }
+  .btn-primary:hover { background: var(--blue2); }
+  .btn-primary:disabled { opacity: .35; cursor: default; box-shadow: none; }
+  .btn-secondary {
+    background: var(--bg2); border: 1.5px solid var(--orange);
+    color: var(--orange); padding: 11px 22px; border-radius: 10px;
+    cursor: pointer; font-size: .88rem; font-weight: 600; transition: .18s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .btn-secondary:hover { background: var(--orange3); }
+
+  /* RESULTS */
+  #results { display: none; max-width: 700px; margin: 0 auto; padding: 52px 24px 80px; }
+  .results-header { text-align: center; margin-bottom: 44px; }
+  .results-score-ring {
+    width: 140px; height: 140px; border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: var(--shadow);
+  }
+  .results-score-ring.pass { background: var(--green2); border: 3px solid var(--green); }
+  .results-score-ring.fail { background: var(--red2); border: 3px solid var(--red); }
+  .results-score-ring.partial { background: var(--orange3); border: 3px solid var(--orange); }
+  .score-pct { font-family: 'Fraunces', serif; font-size: 2.8rem; font-weight: 900; line-height: 1; }
+  .score-pct.pass { color: var(--green); }
+  .score-pct.fail { color: var(--red); }
+  .score-pct.partial { color: var(--orange); }
+  .score-label { font-size: .7rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-top: 4px; }
+  .results-title { font-family: 'Fraunces', serif; font-size: 2rem; color: var(--blue); font-weight: 900; margin-bottom: 8px; }
+  .results-meta { font-size: .88rem; color: var(--muted); }
+
+  .results-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 32px 0; }
+  .stat-box {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 20px; text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .stat-val { font-family: 'Fraunces', serif; font-size: 2.2rem; font-weight: 900; }
+  .stat-val.green { color: var(--green); }
+  .stat-val.red { color: var(--red); }
+  .stat-val.blue { color: var(--blue); }
+  .stat-lbl { font-size: .72rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
+
+  .review-section { margin-top: 36px; }
+  .review-title { font-family: 'Fraunces', serif; font-size: 1.2rem; color: var(--blue); font-weight: 700; margin-bottom: 16px; }
+  .review-item {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 16px 20px; margin-bottom: 10px;
+    border-left: 4px solid transparent; font-size: .87rem; line-height: 1.6;
+    box-shadow: var(--shadow);
+  }
+  .review-item.correct { border-left-color: var(--green); }
+  .review-item.wrong { border-left-color: var(--red); }
+  .review-item-q { color: var(--text); margin-bottom: 6px; font-weight: 500; }
+  .review-item-ans { font-size: .81rem; margin-top: 4px; color: var(--text2); }
+  .review-item-ans .my { color: var(--red); font-weight: 600; }
+  .review-item-ans .ok { color: var(--green); font-weight: 600; }
+  .review-item-retro { font-size: .78rem; color: var(--muted); margin-top: 5px; font-style: italic; }
+
+  .results-actions { display: flex; gap: 14px; justify-content: center; margin-top: 36px; flex-wrap: wrap; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);} }
+  .fade-in { animation: fadeUp .3s ease; }
+
+  @media(max-width:600px) {
+    .home-hero { flex-direction: column; }
+    .hero-deco { display: none; }
+    .home-hero h1 { font-size: 2.2rem; }
+    .q-card { padding: 22px 16px; }
+    .results-stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-tag">M5</div>
+    <div>
+      <div class="header-title">Simulacros</div>
+      <div class="header-sub">Trastornos del lenguaje</div>
+    </div>
+  </div>
+  <div class="header-badge">5 × 30 preguntas</div>
+</div>
+
+<!-- HOME -->
+<div id="home">
+  <div class="home-hero">
+    <div class="hero-text">
+      <div class="hero-eyebrow">📘 Módulo 5 · Banco de preguntas</div>
+      <h1>Banco de<br><em>Simulacros</em></h1>
+      <p>Selecciona un simulacro para comenzar tu práctica. Cada uno contiene 30 preguntas de opción múltiple con retroalimentación inmediata.</p>
+    </div>
+    <div class="hero-deco">M5</div>
+  </div>
+  <div class="sim-grid" id="simGrid"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="quiz-nav">
+    <button class="btn-back" onclick="goHome()">← Inicio</button>
+    <div class="quiz-title" id="quizTitle"></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-meta"><span id="progressText"></span><span id="scoreText"></span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+  <div id="qWrap"></div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="results-header">
+    <div class="results-score-ring" id="scoreRing">
+      <div class="score-pct" id="scorePct"></div>
+      <div class="score-label">puntuación</div>
+    </div>
+    <div class="results-title" id="resultsTitle"></div>
+    <div class="results-meta" id="resultsMeta"></div>
+  </div>
+  <div class="results-stats">
+    <div class="stat-box"><div class="stat-val green" id="statCorr">0</div><div class="stat-lbl">Correctas</div></div>
+    <div class="stat-box"><div class="stat-val red" id="statWrong">0</div><div class="stat-lbl">Incorrectas</div></div>
+    <div class="stat-box"><div class="stat-val blue" id="statPct">0%</div><div class="stat-lbl">Porcentaje</div></div>
+  </div>
+  <div class="review-section">
+    <div class="review-title">📋 Revisión detallada</div>
+    <div id="reviewList"></div>
+  </div>
+  <div class="results-actions">
+    <button class="btn-secondary" onclick="retryQuiz()">🔁 Repetir simulacro</button>
+    <button class="btn-primary" onclick="goHome()">← Volver al inicio</button>
+  </div>
+</div>
+
+<script>
+const SIMS = [
+  [
+    {id:1,p:'¿Cuáles son algunos de los indicadores de TDAH en el aula según el texto?',a:'Buena conducta en clase y obediencia al profesor.',b:'Dificultad para adquirir buenos hábitos de higiene.',c:'Buen comportamiento con los compañeros.',d:'Excelentes hábitos académicos.',ok:'B',r:'La correcta es B: Dificultad para adquirir buenos hábitos de higiene.. Evidencia: “esores acerca de la existencia de algún tipo de problema. Entre los principales indicadores durante la etapa escolar se encuentran: Tienen dificultad para adquirir buenos hábitos de higiene (lavado de dientes o manos). S...”',ref:'(M5, p. 67)'},
+    {id:2,p:'¿Cuál es el objetivo del EDAH en la evaluación del TDAH?',a:'Evaluar la conducta de los hermanos.',b:'Evaluar la conducta de los amigos.',c:'Evaluar la conducta de los padres.',d:'Evaluar la conducta habitual del niño.',ok:'D',r:'La correcta es D: Evaluar la conducta habitual del niño.. Evidencia: “ificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184J] Diagnóstico y evaluación del TDAH. 4. Pruebas e instrumentos para el proceso diag...”',ref:'(M5, p. 40)'},
+    {id:3,p:'¿Cuál es una estrategia que un profesor puede seguir para conseguir un comportamiento apropiado en niños con TDAH?',a:'Recriminar una conducta sin separar al niño del acto llevado a cabo.',b:'No proporcionar pautas correctas y adecuadas de conducta.',c:'Ignorar las conductas perturbadoras de los alumnos.',d:'Mostrar una actitud tolerante, flexible y paciente.',ok:'D',r:'La correcta es D: Mostrar una actitud tolerante, flexible y paciente.. Evidencia: “que, el alumno no podrá controlarla. El profesor tiene la función de mostrar el comportamiento apropiado, en relación al comportamiento disruptivo y sus consecuencias, para hacerles participes de la manera adecuada de ha...”',ref:'(M5, p. 125)'},
+    {id:4,p:'¿Cuáles son los componentes de las funciones ejecutivas alteradas en niños y niñas con TDAH?',a:'Percepción visual.',b:'Memoria a largo plazo.',c:'Inhibición de respuesta.',d:'Atención selectiva.',ok:'C',r:'La correcta es C: Inhibición de respuesta.. Evidencia: “que los niños y niñas con TDAH presentan una alteración cognitiva en distintos componentes de las funciones ejecutivas (AACAP, 2007; Willcut et al., 2005). Según la Guía de práctica clínica, 83 estudios con más de 6.000 ...”',ref:'(M5, p. 23)'},
+    {id:5,p:'¿Cuáles son los factores determinantes del TDAH según el texto?',a:'Factores cognitivos.',b:'Factores genéticos.',c:'Factores ambientales.',d:'Factores emocionales.',ok:'B',r:'La correcta es B: Factores genéticos.. Evidencia: “AH [UDI151845] Trastorno de Déficit de Atención con Hiperactividad. 2. Factores determinantes Trastorno de Déficit de Atención con Hiperactividad. 2. Factores determinantes Según el tema que nos ocupa, hemos diferenciado...”',ref:'(M5, p. 7)'},
+    {id:6,p:'¿Cuál es uno de los factores de riesgo relacionados con el TDAH según el texto?',a:'Disfunción de la corteza prefrontal.',b:'Desviación en el desarrollo cortical.',c:'Funcionamiento normal del lóbulo prefrontal.',d:'Volumen cerebral superior al promedio.',ok:'A',r:'La correcta es A: Disfunción de la corteza prefrontal.. Evidencia: “[UDI15184B] Introducción al diagnóstico clínico del TDAH. 2. Factores de riesgo relacionados con el TDAH Introducción al diagnóstico clínico del TDAH. 2. Factores de riesgo relacionados con el TDAH La etiopatogenia, caus...”',ref:'(M5, p. 20)'},
+    {id:7,p:'¿Qué concepto erróneo suelen tener los alumnos con TDAH sobre el estudio?',a:'Aprender de memoria sin comprender.',b:'Organizar su tiempo adecuadamente.',c:'Priorizar sus tareas de forma eficiente.',d:'Dominar una serie de destrezas.',ok:'A',r:'La correcta es A: Aprender de memoria sin comprender.. Evidencia: “en que es sentarse delante del libro o de los apuntes y aprender de memoria sin comprender ni razonar. En cambio, estudiar requiere del dominio de una serie de destrezas, habilidades y técnicas que permiten aprender grac...”',ref:'(M5, p. 103)'},
+    {id:8,p:'¿Qué estrategia se sugiere para mejorar la enseñanza a estudiantes con TDAH?',a:'Enseñarles las operaciones de forma auditiva.',b:'Enseñarles las operaciones de forma gráfica.',c:'Aumentar el nivel de abstracción en la enseñanza.',d:'Enseñarles las operaciones de forma escrita.',ok:'B',r:'La correcta es B: Enseñarles las operaciones de forma gráfica.. Evidencia: “asociadas al TDAH Una clave para mejorar la enseñanza puede ser enseñarles las operaciones representadas de forma gráfica, así se mejorará la compresión de los conceptos y se reducirá al mínimo el nivel de abstracción. u...”',ref:'(M5, p. 95)'},
+    {id:9,p:'¿Qué puede dañar la autoestima de un niño según el texto?',a:'Ser invitado a fiestas de cumpleaños.',b:'Ser premiado por hacer los deberes.',c:'No hacer los deberes.',d:'Ser castigado.',ok:'D',r:'La correcta es D: Ser castigado.. Evidencia: “as educativas para niños con TDAH. 2. Estrategias educativas para fortalecer la autoestima La autoestima es vital para las personas, puesto que de ella dependerá nuestra forma de ser y de actuar. Una persona con una buen...”',ref:'(M5, p. 119)'},
+    {id:10,p:'¿Cuál es el objetivo principal de la Federación Española de Asociaciones de Ayuda al Déficit de Atención e Hiperactividad (FEAADAH)?',a:'Brindar terapia individual a los afectados.',b:'Organizar actividades deportivas.',c:'Promover la investigación del TDAH.',d:'Realizar campañas publicitarias.',ok:'C',r:'La correcta es C: Promover la investigación del TDAH.. Evidencia: “onamos la Federación Española de Asociaciones de Ayuda al Déficit de Atención e Hiperactividad (FEAADAH). Es una asociación sin ánimo de lucro que, desde el año 2002, se dedica a promover la investigación del TDAH y a co...”',ref:'(M5, p. 73)'},
+    {id:11,p:'¿Cuáles son las patologías asociadas al TDAH?',a:'Trastornos de ansiedad.',b:'Trastornos del sueño.',c:'Trastornos de TICs.',d:'Trastornos de la personalidad.',ok:'C',r:'La correcta es C: Trastornos de TICs.. Evidencia: “[AFO028VTC] Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184K] Diagnóstico y evaluación del TDAH. 5...”',ref:'(M5, p. 50)'},
+    {id:12,p:'¿Cuál es el objetivo de las técnicas de autoinstrucciones en niños con TDAH?',a:'Fomentar la impulsividad.',b:'Aumentar la precipitación en las respuestas.',c:'Facilitar la interiorización de reglas e instrucciones.',d:'Disminuir la capacidad de demora personal.',ok:'C',r:'La correcta es C: Facilitar la interiorización de reglas e instrucciones.. Evidencia: “dación Cantabria Ayuda al Déficit de Atención e Hiperactividad) 4.2. Técnica de autoinstrucciones El lenguaje interno o las autoinstrucciones son las que facilitan la interiorización de las reglas e instrucciones, ya que...”',ref:'(M5, p. 129)'},
+    {id:13,p:'¿Cuál es uno de los objetivos de promover una escuela inclusiva para niños con TDAH?',a:'Limitar el desarrollo de destrezas sociales y de lenguaje.',b:'Ignorar las potencialidades del alumnado con TDAH.',c:'Favorecer la exclusión del alumnado con TDAH.',d:'Mejorar el contexto escolar.',ok:'D',r:'La correcta es D: Mejorar el contexto escolar.. Evidencia: “H [UDI15184V] Atención psicoeducativa integral en TDAH. 3. Promover una escuela inclusiva La escuela inclusiva debe de partir con el objetivo de conseguir mejorar el contexto, buscando alternativas que favorezcan la inte...”',ref:'(M5, p. 70)'},
+    {id:14,p:'¿Por qué los alumnos con TDAH pueden presentar errores en las tareas escolares?',a:'Debido a la falta de interés en las tareas.',b:'Debido a la falta de conocimientos precisos.',c:'Debido a la inmadurez en la concentración.',d:'Debido a su baja capacidad intelectual.',ok:'C',r:'La correcta es C: Debido a la inmadurez en la concentración.. Evidencia: “la inmadurez que presentan, ya que les afecta en la intensidad y duración de su concentración y en la habilidad para mantener la atención en la tarea que están realizando. Según se afirma en el proyecto de la Fundación C...”',ref:'(M5, p. 65)'},
+    {id:15,p:'¿En qué situación se utiliza la categoría de trastorno por déficit de atención con hiperactividad no especificado?',a:'Cuando el clínico no puede determinar la causa del incumplimiento de los criterios de TDAH.',b:'Cuando no se cumplen los criterios de trastorno por TDAH.',c:'Cuando hay presencia de trastorno generalizado del desarrollo o trastorno psicótico.',d:'Cuando se presentan patologías comórbidas con el TDAH.',ok:'A',r:'La correcta es A: Cuando el clínico no puede determinar la causa del incumplimiento de los criterios de TDAH.. Evidencia: “iliza en situaciones en las que el clínico opta por no especificar el motivo de incumplimiento de los criterios de trastorno por déficit de atención con hiperactividad o de un trastorno del desarrollo neurológico específ...”',ref:'(M5, p. 34)'},
+    {id:16,p:'¿Cuál es la diferencia en las manifestaciones clínicas de TDAH entre niños y niñas?',a:'No hay diferencias en las manifestaciones clínicas entre niños y niñas.',b:'Mayor inatención en niños y mayor hiperactividad en niñas.',c:'Mayor inatención en niñas y mayor hiperactividad en niños.',d:'Mayor impulsividad en niños y niñas por igual.',ok:'C',r:'La correcta es C: Mayor inatención en niñas y mayor hiperactividad en niños.. Evidencia: “ión en TDAH [UDI151848] Trastorno de Déficit de Atención con Hiperactividad. 5. Manifestaciones clínicas Trastorno de Déficit de Atención con Hiperactividad. 5. Manifestaciones clínicas Para la elaboración de este aparta...”',ref:'(M5, p. 16)'},
+    {id:17,p:'¿Qué busca la terapia cognitivo-conductual en niños con TDAH?',a:'Aumentar las recompensas extrínsecas.',b:'Evitar los aspectos problemáticos.',c:'Desarrollar y orientar personalmente.',d:'Disminuir el autoconocimiento.',ok:'C',r:'La correcta es C: Desarrollar y orientar personalmente.. Evidencia: “de fracaso. Darle valor y utilidad a las recompensas extrínsecas e intrínsecas. Desarrollar el autoconocimiento, mediante técnicas sobre el propio desarrollo de la persona. Abordar los aspectos problemáticos y que genera...”',ref:'(M5, p. 60)'},
+    {id:18,p:'¿Cuál es uno de los criterios diagnósticos contemplados en el DSM-V para el TDAH?',a:'Síntomas presentes en un solo contexto.',b:'Síntomas presentes en dos o más contextos.',c:'Síntomas que no reducen la calidad del funcionamiento social o académico.',d:'Síntomas que no interfieren con el funcionamiento social o académico.',ok:'B',r:'La correcta es B: Síntomas presentes en dos o más contextos.. Evidencia: “o traumático en la vida del niño. 3.2. Observación directa Uno de los criterios diagnósticos contemplados en el DSM-V para el TDAH es que varios de los síntomas deben estar presentes en dos o más contextos, es decir, deb...”',ref:'(M5, p. 37)'},
+    {id:19,p:'¿Cuál es uno de los objetivos de la Asociación Acofa TDAH?',a:'Realizar actividades de formación para profesionales de la enseñanza.',b:'Defender los derechos de las familias afectadas.',c:'Fomentar el asociacionismo de afectados por el TDAH.',d:'Promover la investigación sobre el TDAH.',ok:'B',r:'La correcta es B: Defender los derechos de las familias afectadas.. Evidencia: “os/as con TDAH déficit de atención con o sin hiperactividad), constituidos cómo asociación desde principios del 2010 en la provincia de A Coruña. Trabajan de manera conjunta por un desarrollo digno y completo de sus hijo...”',ref:'(M5, p. 75)'},
+    {id:20,p:'¿Qué son las adaptaciones curriculares no significativas para niños con TDAH?',a:'Modifican elementos no prescriptivos del currículo.',b:'Modifican elementos esenciales del currículo.',c:'Modifican elementos básicos del currículo.',d:'Modifican elementos prescriptivos del currículo.',ok:'A',r:'La correcta es A: Modifican elementos no prescriptivos del currículo.. Evidencia: “Adaptaciones curriculares para niños con TDAH. 3. Adaptaciones curriculares no significativas Adaptaciones curriculares para niños con TDAH. 3. Adaptaciones curriculares no significativas Las adaptaciones curriculares no...”',ref:'(M5, p. 99)'},
+    {id:21,p:'¿Cuáles son los síntomas más característicos de los niños con sospecha de TDAH?',a:'Dificultad para concentrarse.',b:'Ataques de rabia.',c:'Hiperactividad.',d:'Problemas de aprendizaje.',ok:'B',r:'La correcta es B: Ataques de rabia.. Evidencia: “ractividad. 3. Síntomas asociados al TDAH en menores Estos síntomas son los más característicos de los niños con sospecha de TDAH y se manifiestan y presentan con independencia de su condición social, cultural y racial, ...”',ref:'(M5, p. 13)'},
+    {id:22,p:'¿Cuál es un indicador que puede dar la señal de alarma al profesor sobre un posible padecimiento de TDAH en un niño en el ámbito escolar?',a:'Poca actitud e interés sostenido por el juego con juguetes.',b:'Desarrollo adecuado del juego social asociativo-cooperativo.',c:'Rabietas cuando no obtiene lo que quiere.',d:'Preferencia por los juegos educativos sobre los deportivos.',ok:'A',r:'La correcta es A: Poca actitud e interés sostenido por el juego con juguetes.. Evidencia: “tal Infanto-Juvenil para que realicen las pruebas necesarias para determinar el padecimiento o no de un déficit de atención con hiperactividad. 1.2. Ámbito escolar El déficit de atención con hiperactividad viene caracter...”',ref:'(M5, p. 29)'},
+    {id:23,p:'¿Cuál es una de las etapas del entrenamiento asertivo mencionadas en el texto?',a:'Escribir un guión.',b:'Analizar situaciones.',c:'Desarrollar lenguaje corporal.',d:'Identificar estilos.',ok:'A',r:'La correcta es A: Escribir un guión.. Evidencia: “ta, en la que el respeto hacia la otra persona sea un elemento primordial. 2.1. Entrenamiento asertivo A pesar de que existen muchos métodos y tipos de entrenamiento asertivos, a continuación se darán los pasos de uno de...”',ref:'(M5, p. 121)'},
+    {id:24,p:'¿Cuál es uno de los síntomas más destacados en los niños diagnosticados con TDAH?',a:'Moverse en el asiento.',b:'Correr en sitios inesperados.',c:'Hablar en exceso.',d:'Balancearse en la silla.',ok:'A',r:'La correcta es A: Moverse en el asiento.. Evidencia: “DAH La hiperactividad motriz es uno de los síntomas más destacados en los niños diagnosticados con TDAH. Desde los 3-10 años, los niños y las niñas se identifican por una actividad motriz gruesa que es categorizada por e...”',ref:'(M5, p. 83)'},
+    {id:25,p:'¿Qué estructuras cerebrales se ven afectadas en los individuos con TDAH?',a:'Tálamo.',b:'Cerebelo.',c:'Zonas prefrontales.',d:'Corteza frontal.',ok:'D',r:'La correcta es D: Corteza frontal.. Evidencia: “fectados con TDAH se producen alteraciones anatómico-funcionales a nivel de las estructuras cerebrales (corteza frontal, zonas prefrontales, el tálamo, las zonas dorsolaterales, ganglios basales...), además de deficienci...”',ref:'(M5, p. 5)'},
+    {id:26,p:'¿En qué área pueden manifestar retraso los niños con TDAH según el texto?',a:'Comprensión y expresión de los tiempos verbales.',b:'Procesamiento semántico.',c:'Participación en actividades mediadas por habla.',d:'Acceso rápido a información lingüística.',ok:'A',r:'La correcta es A: Comprensión y expresión de los tiempos verbales.. Evidencia: “adquisición del código fonológico y del nivel morfológico, especialmente en la comprensión y expresión de los tiempos verbales, bajos resultados en las pruebas que requieren pensamiento analógico lingüístico o resolución...”',ref:'(M5, p. 85)'},
+    {id:27,p:'¿Qué permite detectar el SENA en la evaluación del TDAH?',a:'Consumo de sustancias.',b:'Áreas de vulnerabilidad.',c:'Problemas de conducta.',d:'Competencia social.',ok:'B',r:'La correcta es B: Áreas de vulnerabilidad.. Evidencia: “aria, problemas de aprendizaje, esquizotipia… También permite detectar áreas de vulnerabilidad que predisponen al evaluado a presentar problemas más severos. Algunas de estas áreas son los problemas de regulación emocion...”',ref:'(M5, p. 41)'},
+    {id:28,p:'¿Qué dificultades pueden presentar los niños con TDAH en el desarrollo de habilidades metafonológicas?',a:'Falta de vocabulario.',b:'Problemas en la comprensión oral.',c:'Dificultades en la articulación del habla.',d:'Dificultades en el manejo consciente de los segmentos sonoros.',ok:'D',r:'La correcta es D: Dificultades en el manejo consciente de los segmentos sonoros.. Evidencia: “ro aspecto característico de estos niños es en el desarrollo de las habilidades metafonológicas, que son las habilidades que implican el manejo consciente de los segmentos sonoros que integran las palabras y requieren de...”',ref:'(M5, p. 86)'},
+    {id:29,p:'¿Cuál es una de las patologías que con frecuencia aparece junto con el TDAH?',a:'Trastorno de bipolaridad.',b:'Trastorno de esquizofrenia.',c:'Trastorno de personalidad.',d:'Trastorno de conducta.',ok:'D',r:'La correcta es D: Trastorno de conducta.. Evidencia: “AH Diagnóstico y evaluación del TDAH. 5. Patologías asociadas al TDAH Con mucha frecuencia el TDAH concurre con otro tipo de patologías. Por ello, es necesario determinar en la evaluación psicopedagógica del menor si exi...”',ref:'(M5, p. 50)'},
+    {id:30,p:'¿Cuál es un síntoma de hiperactividad asociado al TDAH en menores?',a:'Tener dificultad para esperar su turno.',b:'Realizar tareas completas que requieran tranquilidad.',c:'Hablar sin parar.',d:'Ser impaciente.',ok:'C',r:'La correcta es C: Hablar sin parar.. Evidencia: “nóstico e Intervención en TDAH [UDI151846] Trastorno de Déficit de Atención con Hiperactividad. 3. Síntomas asociados al TDAH en menores 3.2. Síntomas de hiperactividad Existen una serie de síntomas relacionados con la c...”',ref:'(M5, p. 12)'},
+  ],
+  [
+    {id:1,p:'¿Cuáles son las dificultades asociadas a la multiplicación en niños con TDAH?',a:'Problemas con las llevadas.',b:'No entienden el posicionamiento de las cifras.',c:'Dificultad para memorizar las tablas.',d:'No realizan el cálculo mental de manera adecuada.',ok:'C',r:'La correcta es C: Dificultad para memorizar las tablas.. Evidencia: “da. Tienen problemas con las llevadas porque no saben donde hay que colocarlas. Multiplicación: las dificultades se centran en: Dificultad para memorizar las tablas, debido al déficit de memoria. No realizan el cálculo m...”',ref:'(M5, p. 94)'},
+    {id:2,p:'¿Qué busca la asociación en relación al tratamiento del TDAH?',a:'Difundir información falsa.',b:'Conseguir una detección precoz y un tratamiento temprano.',c:'Promover el aislamiento de las familias afectadas.',d:'Rechazar la detección precoz.',ok:'B',r:'La correcta es B: Conseguir una detección precoz y un tratamiento temprano.. Evidencia: “. Asesorar a las familias con el objetivo de conseguir una detección precoz del tratamiento y con ello un tratamiento temprano y una orientación psicoeducativa, escolar y profesional más efectivas. La atención y promoció...”',ref:'(M5, p. 78)'},
+    {id:3,p:'¿Qué es la autoestima?',a:'Rechazo personal.',b:'Sentimiento de aprecio.',c:'Concepto de valía.',d:'Valoración global.',ok:'D',r:'La correcta es D: Valoración global.. Evidencia: “stima La autoestima es el sentimiento de aprecio o de rechazo que acompaña a la valoración global que hacemos de nosotros mismos. Es algo personal que va construyéndose a lo largo del tiempo, mediante la valoración de la...”',ref:'(M5, p. 117)'},
+    {id:4,p:'¿Qué consecuencia del TDAH es común en niños según el texto?',a:'Evitar roces con otros estudiantes.',b:'Pocas amistades duraderas.',c:'Seguir las normas de los juegos.',d:'Buenas habilidades sociales.',ok:'B',r:'La correcta es B: Pocas amistades duraderas.. Evidencia: “gnóstico e Intervención en TDAH [UDI15184R] Tratamiento de TDAH. 6. Principales consecuencias del TDAH en niños Finalmente, es común que tengan roces con otros estudiantes o compañeros, agrediendo por impulsividad o por ...”',ref:'(M5, p. 64)'},
+    {id:5,p:'¿Cuál es el enfoque complementario para evaluar el TDAH según el texto?',a:'Observación.',b:'Instrumentos.',c:'Diagnóstico.',d:'Entrevista.',ok:'B',r:'La correcta es B: Instrumentos.. Evidencia: “valuación del trastorno pasos a seguir tanto, el uso de estos instrumentos será complementario a la entrevista clínica y a la observación directa. ueca.euroinnova.com 3 / 3...”',ref:'(M5, p. 38)'},
+    {id:6,p:'¿Cuál es el objetivo principal de la Asociación ACODAH?',a:'Promover la investigación del TDAH.',b:'Realizar campañas publicitarias.',c:'Ayudar a las personas con TDAH a integrarse en la sociedad.',d:'Ofrecer tratamiento médico.',ok:'C',r:'La correcta es C: Ayudar a las personas con TDAH a integrarse en la sociedad.. Evidencia: “sonas que padecen este trastorno, a desarrollar sus capacidades para que puedan integrarse en la sociedad actual, llegando a adquirir las habilidades necesarias que les permitan disfrutar de una vida autónoma y de calida...”',ref:'(M5, p. 74)'},
+    {id:7,p:'¿Cuál es el principal objetivo de la terapia conductual en el tratamiento del TDAH?',a:'Modificar el entorno físico.',b:'Retroalimentación constante.',c:'Ayudar a los padres y familia.',d:'Promover cambios en el comportamiento.',ok:'D',r:'La correcta es D: Promover cambios en el comportamiento.. Evidencia: “rvenciones que modifican el entorno físico o social para promover cambios en el comportamiento. Suele ser muy eficaz para ayudar a los padres y resto de miembros de la familia a manejar al niño. Terapia conductual: El pr...”',ref:'(M5, p. 57)'},
+    {id:8,p:'¿Cuál es el subtipo de TDAH más frecuente en niñas?',a:'Hiperactivo-impulsivo.',b:'No se puede determinar.',c:'No se menciona.',d:'Inatento.',ok:'D',r:'La correcta es D: Inatento.. Evidencia: “s, para los que determinaron que: TDAH-C El subtipo combinado se presentaba más frecuentemente en niños que en niñas (80% frente al 65%, respectivamente), TDAH-DA El subtipo inatento era más frecuente en niñas que en niñ...”',ref:'(M5, p. 16)'},
+    {id:9,p:'¿Qué técnica es utilizada para el autocontrol de la conducta impulsiva en niños con TDAH?',a:'Técnica del elefante.',b:'Técnica de la mariposa.',c:'Técnica del león.',d:'Técnica de la tortuga.',ok:'D',r:'La correcta es D: Técnica de la tortuga.. Evidencia: “ias educativas para niños con TDAH. 4. Estrategias educativas para potenciar el autocontrol Estrategias educativas para niños con TDAH. 4. Estrategias educativas para potenciar el autocontrol El autocontrol ha sido defin...”',ref:'(M5, p. 128)'},
+    {id:10,p:'¿Qué dificultades académicas pueden experimentar los alumnos con TDAH?',a:'Desarrollo motriz.',b:'Dificultad para mantener el nivel de atención.',c:'Habla y lenguaje.',d:'Problemas conductuales y emocionales.',ok:'B',r:'La correcta es B: Dificultad para mantener el nivel de atención.. Evidencia: “al Déficit de Atención e Hiperactividad los alumnos con dicho trastorno pueden experimentar a lo largo de su escolarización diferentes dificultades académicas, lo que puede provocar retrasos significativos en su aprendiz...”',ref:'(M5, p. 80)'},
+    {id:11,p:'¿Cuáles son los accidentes más comunes en niños con TDAH?',a:'Atrancamiento con cuerpos extraños.',b:'Fracturas.',c:'Quemaduras.',d:'Heridas abiertas.',ok:'B',r:'La correcta es B: Fracturas.. Evidencia: “o fundamental para poder aprender correctamente la lectura y la escritura. 1.4. Accidentes El TDAH se trata de un trastorno resultado de la interacción de factores biológicos con otros ambientales. Los menores presentan ...”',ref:'(M5, p. 86)'},
+    {id:12,p:'¿Cuál es una de las dificultades asociadas al TDAH según Fernández (2018)?',a:'Gran capacidad para controlar las normas sociales.',b:'Escasa habilidad para empatizar.',c:'Alta competencia social.',d:'Alta tolerancia a la frustración.',ok:'B',r:'La correcta es B: Escasa habilidad para empatizar.. Evidencia: “[AFO028VTC] Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184Y] Dificultades asociadas al TDAH. 1. D...”',ref:'(M5, p. 87)'},
+    {id:13,p:'¿Qué adaptaciones ambientales se recomiendan para facilitar al alumno los procesos de atención, concentración y seguimiento del trabajo en el TDAH?',a:'Utilizar fichas coloridas.',b:'Sentarle lejos de compañeros.',c:'Supervisión constante.',d:'Rodearle de distracciones.',ok:'C',r:'La correcta es C: Supervisión constante.. Evidencia: “5. Adaptaciones ambientales Para facilitar al alumno los procesos de atención, concentración y seguimiento del trabajo es recomendable realizar las siguientes adaptaciones ambientales: Supervisión constante. Situar los p...”',ref:'(M5, p. 101)'},
+    {id:14,p:'¿Qué tipo de actividades realiza la Asociación ACODAH para cumplir su objetivo?',a:'Cursos, Jornadas, Conferencias.',b:'Campañas publicitarias.',c:'Tratamientos médicos gratuitos.',d:'Investigación científica.',ok:'A',r:'La correcta es A: Cursos, Jornadas, Conferencias.. Evidencia: “, enlace con otras asociaciones y/o grupos afines, realizando Cursos, Jornadas, Conferencias, etc … sensibilizando a la población, ofreciendo información sobre el trastorno y las formas más adecuadas de “trabajar” con es...”',ref:'(M5, p. 74)'},
+    {id:15,p:'¿Por qué es fundamental establecer y tratar el TDAH de manera temprana?',a:'Para evitar el desarrollo de patologías concurrentes.',b:'Para evitar el diagnóstico tardío.',c:'Para evitar el daño emocional del niño.',d:'Para reducir los síntomas considerablemente.',ok:'A',r:'La correcta es A: Para evitar el desarrollo de patologías concurrentes.. Evidencia: “cción precoz ayuda a disminuir el riesgo de desarrollar otro tipo de patologías concurrentes a la hiperactividad. De hecho, la detección tardía esta relacionada positivamente con la posibilidad de padecer alguna patologí...”',ref:'(M5, p. 61)'},
+    {id:16,p:'¿Qué evalúa el sistema AULA en el proceso diagnóstico del TDAH?',a:'Atención sostenida.',b:'Actividad motora excesiva.',c:'Velocidad de procesamiento.',d:'Impulsividad.',ok:'B',r:'La correcta es B: Actividad motora excesiva.. Evidencia: “de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184J] Diagnóstico y evaluación del TDAH. 4. Pruebas e instrumentos para el proceso diagnóstico y ev...”',ref:'(M5, p. 45)'},
+    {id:17,p:'¿Cuáles son algunas estrategias para controlar y manejar la hiperactividad motriz en niños con TDAH?',a:'Hablar rápido y fuerte.',b:'Dar un propósito a su necesidad de movimiento.',c:'Ignorar movimientos incontrolados.',d:'Fomentar la actividad descontrolada.',ok:'B',r:'La correcta es B: Dar un propósito a su necesidad de movimiento.. Evidencia: “UDI15184Y] Dificultades asociadas al TDAH. 1. Dificultades asociadas al TDAH La hiperactividad motriz es uno de los síntomas más destacados en los niños diagnosticados con TDAH. Desde los 3-10 años, los niños y las niñas...”',ref:'(M5, p. 83)'},
+    {id:18,p:'¿Cuál es una estrategia recomendable para mejorar la escritura en niños con TDAH?',a:'Evitar trabajar diariamente con las palabras en las que suelan cometer más errores.',b:'Corregir los errores inmediatamente.',c:'Realizar copias reiteradas de la misma palabra.',d:'Observar al niño durante el proceso de ejecución.',ok:'B',r:'La correcta es B: Corregir los errores inmediatamente.. Evidencia: “dar la corrección de manera inmediata al niño acerca de sus errores. También es recomendable trabajar diariamente con aquellas palabras en las que suelan cometer más errores y observar al niño durante el proceso de ejecu...”',ref:'(M5, p. 93)'},
+    {id:19,p:'¿Cuál de los siguientes no es un falso mito atribuido al TDAH?',a:'Pautas educativas inadecuadas.',b:'Consumo de azúcares.',c:'Pasar muchas horas ante el televisor.',d:'Trastornos psiquiátricos en los padres.',ok:'D',r:'La correcta es D: Trastornos psiquiátricos en los padres.. Evidencia: “videojuegos.Pautas educativas inadecuadas. Factores psicosociales 2 Trastornos psiquiátricos en los padres.Paternidad y crianza inadecuada. Falso mito: Pasar demasiadas horas ante el televisor o los videojuegos. Pautas e...”',ref:'(M5, p. 10)'},
+    {id:20,p:'¿Cuál es la diferencia entre motricidad gruesa y motricidad fina?',a:'Motricidad gruesa: correr por la clase. Motricidad fina: hacer figuras con papel.',b:'Motricidad gruesa: levantarse del asiento. Motricidad fina: hacer dibujos.',c:'Motricidad gruesa: jugar con el lápiz. Motricidad fina: saltar en el aula.',d:'Motricidad gruesa: saltar en el aula. Motricidad fina: hacer ruidos con los dedos.',ok:'B',r:'La correcta es B: Motricidad gruesa: levantarse del asiento. Motricidad fina: hacer dibujos.. Evidencia: “es asociadas al TDAH. 1. Dificultades asociadas al TDAH Removerse en el asiento Motricidad fina Jugar con el lápiz Hacer figuras con papel Hacer dibujos Hacer ruidos con los dedos Motricidad gruesa: Correr por la clase. ...”',ref:'(M5, p. 84)'},
+    {id:21,p:'¿Cuáles son las principales consecuencias del TDAH en el ámbito escolar según el texto?',a:'Bajas puntuaciones en tests.',b:'Expulsión del colegio.',c:'Falta de interés y capacidades.',d:'Dificultad para aprobar exámenes.',ok:'A',r:'La correcta es A: Bajas puntuaciones en tests.. Evidencia: “gnóstico e Intervención en TDAH [UDI15184R] Tratamiento de TDAH. 6. Principales consecuencias del TDAH en niños demandan mucha atención y suelen desobedecer y no seguir las normas. Esto puede llevar a la desesperación de...”',ref:'(M5, p. 63)'},
+    {id:22,p:'¿Cuál es el factor que mejor predice los accidentes en niños con TDAH?',a:'Problemas de atención.',b:'Problemas conductuales.',c:'Dificultad para frenar impulsos.',d:'Exceso de actividad.',ok:'C',r:'La correcta es C: Dificultad para frenar impulsos.. Evidencia: “observado que los niños con TDAH tienen dos veces más posibilidades de padecer accidentes que el resto, y este riesgo aumenta con el número de accidentes, siendo de 3 a 5 veces mayor el riesgo de tener 3 o más accidentes...”',ref:'(M5, p. 87)'},
+    {id:23,p:'¿Qué tipo de adaptaciones metodológicas se pueden realizar para niños con TDAH?',a:'Reducción del nivel de las tareas.',b:'Supervisión especial en los exámenes.',c:'Entrega oral de los exámenes.',d:'Introducción de ejemplos en los exámenes.',ok:'B',r:'La correcta es B: Supervisión especial en los exámenes.. Evidencia: “TDAH [UDI151853] Adaptaciones curriculares para niños con TDAH. 4. Adaptaciones metodológicas Adaptaciones curriculares para niños con TDAH. 4. Adaptaciones metodológicas Este tipo de adaptaciones permiten modificar las ...”',ref:'(M5, p. 100)'},
+    {id:24,p:'¿Qué trastornos pueden aparecer junto con el TDAH en un niño?',a:'Trastornos de conducta.',b:'Trastornos del sueño.',c:'Depresión.',d:'Trastornos de alimentación.',ok:'C',r:'La correcta es C: Depresión.. Evidencia: “[AFO028VTC] Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184T] Atención psicoeducativa integral en ...”',ref:'(M5, p. 67)'},
+    {id:25,p:'¿Para qué edad está dirigido el SENA, Sistema de Evaluación de Niños y Adolescentes?',a:'5-15 años.',b:'2-18 años.',c:'2-10 años.',d:'10-18 años.',ok:'B',r:'La correcta es B: 2-18 años.. Evidencia: “el proceso diagnóstico y eval(...) 4.2. SENA. Sistema de Evaluación de Niños y Adolescentes El SENA es un instrumento dirigido a la detección de un amplio espectro de problemas emocionales y de conducta desde los 2 hasta...”',ref:'(M5, p. 41)'},
+    {id:26,p:'¿Cuál es uno de los principios básicos de intervención psicoeducativa para el alumnado con TDAH?',a:'No administrar consecuencias inmediatamente.',b:'Dividir tareas en pequeños pasos.',c:'Evitar modificar los refuerzos.',d:'Dar instrucciones complejas.',ok:'B',r:'La correcta es B: Dividir tareas en pequeños pasos.. Evidencia: “0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI151857] Intervención psicoeducativa en TDAH. 1. La intervención psicoeducativa centrada en el aula con el niño. A consecuencia de este esfuerzo se puede lograr q...”',ref:'(M5, p. 110)'},
+    {id:27,p:'¿Qué problema conductual puede presentar una persona con TDAH según Fernández (2018)?',a:'Alta tolerancia a la frustración.',b:'Baja competencia social.',c:'Alta habilidad comunicativa.',d:'Gran capacidad para relacionarse con los iguales.',ok:'B',r:'La correcta es B: Baja competencia social.. Evidencia: “nadas: la de análisis y la de síntesis. La idea es nuevamente que la inhibición conductual proporciona un tiempo para llegar a soluciones más eficaces que las que pueden ser predominantes en una situación. La memoria de ...”',ref:'(M5, p. 193)'},
+    {id:28,p:'¿Cuál es el principal objetivo del tratamiento farmacológico en el TDAH?',a:'Curar el TDAH.',b:'Reducir la hiperactividad.',c:'Mejorar la inhibición de respuestas.',d:'Equilibrar los neurotransmisores.',ok:'B',r:'La correcta es B: Reducir la hiperactividad.. Evidencia: “rincipal objetivo de la terapia conductual? Describir y explicar el tratamiento farmacológico y sus efectos. Describir y determinar la importancia de la terapia cognitivo-conductual. El principal objetivo de esta terapia...”',ref:'(M5, p. 58)'},
+    {id:29,p:'¿Cuáles son algunas de las actividades que realiza la asociación Ampachico?',a:'Desarrollo de campamentos de Verano.',b:'Acogimiento e información.',c:'Reuniones de terapia grupal.',d:'Colaboración con la Universidad de Granada.',ok:'D',r:'La correcta es D: Colaboración con la Universidad de Granada.. Evidencia: “correspondiente. Actividades de socialización para los afectados y su entorno. Colaboración con la Universidad de Granada (UGR) y otras entidades en diversos estudios sobre el trastorno. Colaboración con el entorno educa...”',ref:'(M5, p. 79)'},
+    {id:30,p:'¿Quiénes forman parte de la comunidad educativa según el texto?',a:'Todos los miembros de la comunidad.',b:'Solo los profesores.',c:'Solo los alumnos.',d:'Solo los profesionales externos al centro.',ok:'A',r:'La correcta es A: Todos los miembros de la comunidad.. Evidencia: “249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184V] Atención psicoeducativa integral en TDAH. 3. Promover una escuela inclusiva La escuela inclusiva debe de partir con el objetivo de conseguir mejorar el co...”',ref:'(M5, p. 70)'},
+  ],
+  [
+    {id:1,p:'¿Cuáles son las fases de las técnicas de estudio según el texto?',a:'Memorización y retención.',b:'Lectura comprensiva.',c:'Organización de materiales.',d:'Realización de ejercicios.',ok:'D',r:'La correcta es D: Realización de ejercicios.. Evidencia: “a serie de destrezas, habilidades y técnicas que permiten aprender gracias a la realización de ejercicios. En ocasiones, hay alumnos que pasan muchas horas estudiando y que no obtienen buenos resultados, esto puede ser c...”',ref:'(M5, p. 103)'},
+    {id:2,p:'¿Cuál es uno de los beneficios de la Atomoxetina frente a los tratamientos psicoestimulantes?',a:'Aumenta los niveles de dopamina.',b:'Mejora la ansiedad.',c:'Tiene potencial de abuso.',d:'Puede empeorar los tics.',ok:'B',r:'La correcta es B: Mejora la ansiedad.. Evidencia: “es la Atomoxetina. Uno de sus principales beneficios frente a los tratamientos psicoestimulantes es que no tiene potencial de abuso, puede mejorar la ansiedad y no empeora los tics. Por último, los fármacos se prescriben...”',ref:'(M5, p. 55)'},
+    {id:3,p:'¿Cuál es el objetivo del entrenamiento para la adquisición del lenguaje interno como regulador de la conducta en niños con TDAH?',a:'Eliminar el habla interna.',b:'Inhibir el lenguaje interno.',c:'Estimular la conducta.',d:'Controlar la conducta.',ok:'D',r:'La correcta es D: Controlar la conducta.. Evidencia: “privada, silenciosa y cuya función es ser la mediadora de los pensamientos. El entrenamiento para la adquisición del lenguaje interno como regulador de la conducta es habitual en el trabajo con niños con TDAH. Lo que se ...”',ref:'(M5, p. 131)'},
+    {id:4,p:'¿Cuál es el primer paso del modelado cognitivo para potenciar el autocontrol en niños con TDAH?',a:'El niño se dirige en voz alta, de forma que se da las autoinstrucciones él mismo en voz alta.',b:'El niño es el que vuelve a autodirigirse, en voz muy baja, sobre la realización de la misma tarea.',c:'El niño lleva a cabo la misma tarea que ha realizado el profesor, bajo la dirección de las instrucciones de éste.',d:'El profesor actúa como modelo y lleva a cabo una tarea mientras se habla a sí mismo en voz alta sobre lo que está haciendo.',ok:'D',r:'La correcta es D: El profesor actúa como modelo y lleva a cabo una tarea mientras se habla a sí mismo en voz alta sobre lo que está haciendo.. Evidencia: “ias educativas para niños con TDAH. 4. Estrategias educativas para potenciar el autocontrol Durante el desarrollo evolutivo del niño, el tipo y la función que tiene el lenguaje evoluciona y pasa por diferentes fases. Est...”',ref:'(M5, p. 131)'},
+    {id:5,p:'¿Cuáles son algunos de los errores recurrentes en la lectura de los niños con TDAH?',a:'Adición de letras.',b:'Sustitución de palabras.',c:'Omisión de letras.',d:'Comprensión lectora deficiente.',ok:'B',r:'La correcta es B: Sustitución de palabras.. Evidencia: “adir palabras durante la lectura). Por ejemplo: “Mi hermana(s) se llama María”. Sustituciones de unas palabras por otras. Por ejemplo: “Juan me dio la mono cuando me vio” (en lugar de Mano). Dificultades ante grupos cons...”',ref:'(M5, p. 91)'},
+    {id:6,p:'¿Cuál es la técnica para potenciar el autocontrol en niños con TDAH?',a:'Estrategia para conseguir la conducta apropiada.',b:'Técnicas para disminuir la conducta.',c:'Técnica de la tortuga.',d:'Fomentar la interacción social.',ok:'C',r:'La correcta es C: Técnica de la tortuga.. Evidencia: “ias educativas para niños con TDAH. 4. Estrategias educativas para potenciar el autocontrol Estrategias educativas para niños con TDAH. 4. Estrategias educativas para potenciar el autocontrol El autocontrol ha sido defin...”',ref:'(M5, p. 128)'},
+    {id:7,p:'¿Cuál es uno de los objetivos de la intervención psicoeducativa en TDAH?',a:'Fomentar la hiperactividad.',b:'Mejorar la memoria.',c:'Aumentar la impulsividad.',d:'Promover la interacción social.',ok:'D',r:'La correcta es D: Promover la interacción social.. Evidencia: “0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI151858] Intervención psicoeducativa en TDAH. 2. Objetivos relacionados con la intervención psicoeducativa Intervención psicoeducativa en TDAH. 2. Objetivos relac...”',ref:'(M5, p. 112)'},
+    {id:8,p:'¿Por qué un niño con TDAH puede suspender por no entregar las tareas de casa o llevarlas sin terminar, según el texto?',a:'Falta de interés en las tareas.',b:'Impulsividad.',c:'Falta de capacidades.',d:'Problema de concentración.',ok:'D',r:'La correcta es D: Problema de concentración.. Evidencia: “las tareas de casa o llevar sin terminar, consecuencia directa del problema de concentración que estos niños presentan. Por otro lado, en el aula se les coloca al final para que no molesten ni interrumpan la clase. Ademá...”',ref:'(M5, p. 63)'},
+    {id:9,p:'¿Qué ambiente puede ayudar al niño con TDAH a mejorar su autocontrol?',a:'Ambiente caótico y desorganizado.',b:'Ambiente con poca supervisión y control.',c:'Ambiente estructurado, con rutinas, organizado y motivador.',d:'Ambiente ruidoso y desordenado.',ok:'C',r:'La correcta es C: Ambiente estructurado, con rutinas, organizado y motivador.. Evidencia: “niños con TDAH suelen mostrar dificultades asociadas al trastorno. Un ambiente estructurado, con rutinas, organizado y motivador ayudará al niño con TDAH a mejorar su autocontrol. El maestro debe de actuar y servir de mo...”',ref:'(M5, p. 80)'},
+    {id:10,p:'¿En qué se basa el modelo de actuación defendido por ANHIDACORUÑA?',a:'Intervención en entornos y educación consensuada.',b:'Intervención individualizada.',c:'Atención exclusiva a la diversidad.',d:'Integración exclusiva en el entorno escolar.',ok:'A',r:'La correcta es A: Intervención en entornos y educación consensuada.. Evidencia: “y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184X] Atención psicoeducativa integral en TDAH. 5. Recursos para docentes y familias de niños/as con TDAH déficit ...”',ref:'(M5, p. 75)'},
+    {id:11,p:'¿Cuál es una estrategia recomendada para conseguir un comportamiento apropiado en niños con TDAH?',a:'Ignorar las conductas inapropiadas y elogiar a los alumnos que siguen las reglas.',b:'Regañar a los alumnos que se comportan inadecuadamente.',c:'Establecer reglas de comportamiento sin explicarlas.',d:'No prestar atención a ningún alumno en clase.',ok:'A',r:'La correcta es A: Ignorar las conductas inapropiadas y elogiar a los alumnos que siguen las reglas.. Evidencia: “que, el alumno no podrá controlarla. El profesor tiene la función de mostrar el comportamiento apropiado, en relación al comportamiento disruptivo y sus consecuencias, para hacerles participes de la manera adecuada de ha...”',ref:'(M5, p. 125)'},
+    {id:12,p:'¿Cuál es el propósito de la prueba DiViSA?',a:'Identificar problemas de atención.',b:'Identificar problemas de conducta.',c:'Evaluar habilidades lingüísticas.',d:'Evaluar habilidades motoras.',ok:'A',r:'La correcta es A: Identificar problemas de atención.. Evidencia: “Discriminación Visual Simple de Árboles Esta prueba, nació con el propósito de identificar niños con dificultades de rendimiento escolar debidos a problemas atencionales y para asistir en el proceso diagnóstico de otros ...”',ref:'(M5, p. 42)'},
+    {id:13,p:'¿Qué se recomienda para el estudio de niños con TDAH?',a:'Realizar el estudio a diferentes horas cada día.',b:'Establecer descansos en el horario de estudio.',c:'Empezar con las actividades más fáciles.',d:'No involucrar a los padres en el estudio en casa.',ok:'B',r:'La correcta es B: Establecer descansos en el horario de estudio.. Evidencia: “l que se tenga en cuenta el tiempo total que dispone. Además, es importantísimo establecer descansos en el horario para que el niño pueda moverse y reposar. ueca.euroinnova.com 5 / 5...”',ref:'(M5, p. 107)'},
+    {id:14,p:'¿En qué situaciones se utiliza la categoría de otro trastorno por déficit de atención con hiperactividad especificado?',a:'Cuando predominan los síntomas característicos de TDAH.',b:'Cuando no hay suficiente información para hacer un diagnóstico más específico.',c:'Cuando se cumplen todos los criterios del trastorno por déficit de atención con hiperactividad.',d:'Cuando el clínico opta por comunicar el motivo específico por el que la presentación no cumple los criterios de TDAH.',ok:'D',r:'La correcta es D: Cuando el clínico opta por comunicar el motivo específico por el que la presentación no cumple los criterios de TDAH.. Evidencia: “n o abstinencia de sustancias). 2.2. Otro trastorno por déficit de atención con hiperactividad especificado Esta categoría se aplica a presentaciones en las que predominan los síntomas característicos de trastorno por dé...”',ref:'(M5, p. 33)'},
+    {id:15,p:'¿Cuál es una de las principales pautas de actuación para los padres en la terapia conductual del TDAH?',a:'Comparar al niño con otros.',b:'Juzgar al niño por su comportamiento.',c:'Ignorar las conductas inapropiadas.',d:'Entender el comportamiento del niño.',ok:'D',r:'La correcta es D: Entender el comportamiento del niño.. Evidencia: “rvenciones que modifican el entorno físico o social para promover cambios en el comportamiento. Suele ser muy eficaz para ayudar a los padres y resto de miembros de la familia a manejar al niño. Terapia conductual: El pr...”',ref:'(M5, p. 57)'},
+    {id:16,p:'¿Qué aspectos se deben tener en cuenta durante la historia clínica para el diagnóstico del TDAH?',a:'Dificultades en la socialización.',b:'Dificultades en la lectura.',c:'Dificultades en la práctica deportiva.',d:'Dificultades en la alimentación.',ok:'A',r:'La correcta es A: Dificultades en la socialización.. Evidencia: “[AFO028VTC] Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184H] Diagnóstico y evaluación del TDAH. 3...”',ref:'(M5, p. 36)'},
+    {id:17,p:'¿En qué situaciones se produce la desinhibición del comportamiento en niños con TDAH?',a:'En tareas fáciles y entretenidas.',b:'En ambientes estructurados.',c:'En patios, clases y espacios abiertos.',d:'En tareas cortas.',ok:'C',r:'La correcta es C: En patios, clases y espacios abiertos.. Evidencia: “uede ser en patios, clases y espacios abiertos, se produce la desinhibición del comportamiento. ueca.euroinnova.com 10 / 10...”',ref:'(M5, p. 89)'},
+    {id:18,p:'¿Cuál es el propósito de la educación inclusiva?',a:'Favorecer la exclusión.',b:'Promover el desarrollo máximo del alumnado.',c:'Crear desigualdad en la comunidad educativa.',d:'Limitar las oportunidades de aprendizaje.',ok:'B',r:'La correcta es B: Promover el desarrollo máximo del alumnado.. Evidencia: “iva tiene como propósito prestar una atención educativa que favorezca el máximo desarrollo posible de todo el alumnado y la cohesión de todos los miembros de la comunidad. La comunidad educativa está integrada por todas ...”',ref:'(M5, p. 69)'},
+    {id:19,p:'¿Por qué es necesario ponerse en contacto con la familia para verificar el diagnóstico de TDAH?',a:'Para obtener más información sobre el niño.',b:'Para obtener el consentimiento de los padres.',c:'Para solicitar ayuda adicional.',d:'Para confirmar que los comportamientos se dan también en el hogar.',ok:'D',r:'La correcta es D: Para confirmar que los comportamientos se dan también en el hogar.. Evidencia: “de TDAH, es necesario ponerse en contacto con la familia para verificar que los comportamientos se dan también en el hogar. Enunciado de la pregunta Uno de los principales problemas para la detección del TDAH mediante lo...”',ref:'(M5, p. 67)'},
+    {id:20,p:'¿Qué es necesario para conseguir una escuela inclusiva según el texto?',a:'La exclusión de los recursos del entorno.',b:'La falta de programas adecuados para la integración.',c:'La implicación de los demás.',d:'La desatención de todos los miembros de la comunidad educativa.',ok:'C',r:'La correcta es C: La implicación de los demás.. Evidencia: “ia de programas adecuados para la integración, sin perder de vista la necesaria implicación de todos. ueca.euroinnova.com 2 / 2...”',ref:'(M5, p. 70)'},
+    {id:21,p:'¿Qué técnica consiste en repetir insistentemente la misma frase una y otra vez?',a:'Interrogación negativa.',b:'Parafrasear.',c:'Técnica del disco rayado.',d:'Técnica de aserción negativa.',ok:'C',r:'La correcta es C: Técnica del disco rayado.. Evidencia: “la comunicación afectiva, que son: Técnica del disco rayado Consiste en repetir insistentemente la misma frase una y otra vez. Ocurre cuando una persona dice una y otra vez lo mismo y no lo queremos hacer. Un ejemplo ser...”',ref:'(M5, p. 122)'},
+    {id:22,p:'¿Qué estrategia se recomienda para responder a la crítica de manera efectiva?',a:'Contraatacar al otro.',b:'Reconocer los aspectos reales de la crítica.',c:'Aceptar la crítica sin cuestionarla.',d:'Ignorar la crítica.',ok:'B',r:'La correcta es B: Reconocer los aspectos reales de la crítica.. Evidencia: “réd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15185D] Estrategias educativas para niños con TDAH. 2. Estrategias educativas para garantizar una comun(...) y se darán las oportunas indicaciones p...”',ref:'(M5, p. 122)'},
+    {id:23,p:'¿Cuáles son las fortalezas que suelen tener los niños con TDAH?',a:'Comunicación verbal.',b:'Habilidades matemáticas.',c:'Habilidades manipulativas.',d:'Memoria fotográfica.',ok:'C',r:'La correcta es C: Habilidades manipulativas.. Evidencia: “a intervención psicoeducativa fortalezas de estos niños suelen ser: habilidades manipulativas, la comunicación a través del movimiento y la creatividad. La mejor manera de desarrollarlas será trabajar desde la potenciali...”',ref:'(M5, p. 113)'},
+    {id:24,p:'¿Por qué los niños con TDAH suelen tener roces con otros estudiantes o compañeros?',a:'Por evitar problemas.',b:'Por tener muchas amistades.',c:'Por agredir por impulsividad.',d:'Por seguir las normas de los juegos.',ok:'C',r:'La correcta es C: Por agredir por impulsividad.. Evidencia: “e, es común que tengan roces con otros estudiantes o compañeros, agrediendo por impulsividad o por no seguir las normas de los juegos. Tienen pocas amistades duraderas y suelen meterse en líos y meter a otros en líos. ue...”',ref:'(M5, p. 64)'},
+    {id:25,p:'¿Qué tipo de colaboración busca la Asociación ATIMANA-DAH?',a:'Colaboración con centros sanitarios públicos y privados.',b:'Colaboración con centros deportivos.',c:'Colaboración con centros educativos privados.',d:'Colaboración con centros de entretenimiento.',ok:'A',r:'La correcta es A: Colaboración con centros sanitarios públicos y privados.. Evidencia: “ad, ayudándolas a ser capaces de desenvolverse en ella por sí mismas. Buscar la colaboración de centros sanitarios públicos y privados. Buscar la colaboración de centros educativos infantil, primaria, secundaria, bachill...”',ref:'(M5, p. 77)'},
+    {id:26,p:'¿Cuál es una de las acciones que se mencionan para lograr la plena integración de las personas con TDA-H en la sociedad actual?',a:'Organizar actividades educativas para padres y familias.',b:'Colaborar con instituciones públicas en estudios conjuntos.',c:'Realizar campañas de sensibilización social.',d:'Buscar la colaboración de los Centros Sanitarios.',ok:'C',r:'La correcta es C: Realizar campañas de sensibilización social.. Evidencia: “H en la sociedad actual, dando a conocer sus problemas y realizando campañas de sensibilización social. Promover el estudio y la investigación sobre el TDA-H, así como difundir los avances que en esta materia se produzca...”',ref:'(M5, p. 76)'},
+    {id:27,p:'¿Cuál es una de las adaptaciones organizativas recomendadas para niños con TDAH?',a:'Realizar exámenes sorpresa.',b:'Ignorar los errores del alumno.',c:'Mantener el contacto visual y la proximidad con el alumno a la hora de comunicarnos con él.',d:'Castigar al alumno por su comportamiento.',ok:'C',r:'La correcta es C: Mantener el contacto visual y la proximidad con el alumno a la hora de comunicarnos con él.. Evidencia: “TDAH [UDI151855] Adaptaciones curriculares para niños con TDAH. 6. Adaptaciones organizativas Adaptaciones curriculares para niños con TDAH. 6. Adaptaciones organizativas Las adaptaciones organizativas recomendadas para ...”',ref:'(M5, p. 102)'},
+    {id:28,p:'¿Cuál es uno de los aspectos que el maestro debe tener presente en la intervención psicoeducativa con niños con TDAH?',a:'Manejar adecuadamente la situación de la clase.',b:'Evitar los sitios en clase que cuenten con elementos que hagan distraerse al niño.',c:'Apoyarse en las familias para informarles de los progresos del niño.',d:'Reforzar negativamente los comportamientos derivados de la hiperactividad del niño.',ok:'A',r:'La correcta es A: Manejar adecuadamente la situación de la clase.. Evidencia: “0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI151857] Intervención psicoeducativa en TDAH. 1. La intervención psicoeducativa centrada en el aula con el niño. A consecuencia de este esfuerzo se puede lograr q...”',ref:'(M5, p. 110)'},
+    {id:29,p:'¿Qué tipo de factores influyen en el desarrollo de la capacidad de control emocional y cognitiva en niños con TDAH?',a:'Factores neurobiológicos.',b:'Factores genéticos.',c:'Factores ambientales.',d:'Factores psicosociales.',ok:'C',r:'La correcta es C: Factores ambientales.. Evidencia: “H para buscar una explicación de la base etiológica de este trastorno (factores ambientales, factores perinatales, genéticos, hormonales). Aunque en la actualidad las causas no se conocen con precisión, las hipótesis que...”',ref:'(M5, p. 192)'},
+    {id:30,p:'¿A partir de qué edad la actividad motriz fina predominará en los niños con TDAH?',a:'10 años.',b:'3-10 años.',c:'15 años.',d:'5 años.',ok:'A',r:'La correcta es A: 10 años.. Evidencia: “184Y] Dificultades asociadas al TDAH. 1. Dificultades asociadas al TDAH La hiperactividad motriz es uno de los síntomas más destacados en los niños diagnosticados con TDAH. Desde los 3-10 años, los niños y las niñas se i...”',ref:'(M5, p. 83)'},
+  ],
+  [
+    {id:1,p:'¿Cuál es la característica principal de la conducta de niños con TDAH?',a:'Pocos errores.',b:'Conducta impulsiva.',c:'Poca distracción.',d:'Función ejecutiva eficiente.',ok:'B',r:'La correcta es B: Conducta impulsiva.. Evidencia: “ntales. TDAH: La conducta de niños con TDAH se caracteriza por ser una conducta impulsiva, dónde se cometen muchos errores y hay constantes distracciones. La zona del cerebro encargada de llevar a cabo la función ejecuti...”',ref:'(M5, p. 4)'},
+    {id:2,p:'¿En qué consisten las actividades de socialización que realiza la asociación Ampachico?',a:'Colaboración con la Universidad de Granada.',b:'Jornadas informativas para afectados y profesionales.',c:'Charlas a centros escolares.',d:'Desarrollo de campamentos de Verano.',ok:'D',r:'La correcta es D: Desarrollo de campamentos de Verano.. Evidencia: “via solicitud de su dirección o equipo del Ampa correspondiente. Actividades de socialización para los afectados y su entorno. Colaboración con la Universidad de Granada (UGR) y otras entidades en diversos estudios sobre...”',ref:'(M5, p. 79)'},
+    {id:3,p:'¿Por qué es fundamental que la atención psicoeducativa se lleve a cabo desde el colegio y desde casa para los niños con TDAH?',a:'Para evitar la impulsividad en los niños.',b:'Para ajustar la respuesta educativa a las necesidades de los niños.',c:'Para evitar la inmadurez en la concentración.',d:'Para alejarse del currículum ordinario.',ok:'B',r:'La correcta es B: Para ajustar la respuesta educativa a las necesidades de los niños.. Evidencia: “[MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184S] Atención psicoeducativa integral en TDAH. 1. La atención psicoeducativa integral Atención psicoeducativa integral en TDAH. 1. La atención psicoeducat...”',ref:'(M5, p. 65)'},
+    {id:4,p:'¿Qué aspecto se debe trabajar para fomentar la interacción social en niños con TDAH?',a:'Autoafirmación.',b:'Autoestima.',c:'Autocontrol.',d:'Autoconocimiento.',ok:'D',r:'La correcta es D: Autoconocimiento.. Evidencia: “ategias educativas para conseguir un comport(...) Por ello, hay que trabajar el autoconocimiento, a través de aquellas cosas que le cuestan a la hora de relacionarse, aquellas situaciones que tiende a evitar, aquellas si...”',ref:'(M5, p. 127)'},
+    {id:5,p:'¿Cuál es una de las actividades que lleva a cabo la Federación Española de Asociaciones de Ayuda al Déficit de Atención e Hiperactividad (FEAADAH)?',a:'Promover actividades de formación e intercambio de proyectos.',b:'Brindar terapia individual a los afectados.',c:'Organizar actividades deportivas.',d:'Realizar campañas publicitarias.',ok:'A',r:'La correcta es A: Promover actividades de formación e intercambio de proyectos.. Evidencia: “onamos la Federación Española de Asociaciones de Ayuda al Déficit de Atención e Hiperactividad (FEAADAH). Es una asociación sin ánimo de lucro que, desde el año 2002, se dedica a promover la investigación del TDAH y a co...”',ref:'(M5, p. 73)'},
+    {id:6,p:'¿Cuáles son los principales focos de intervención en la terapia cognitivo-conductual para niños con TDAH?',a:'Desarrollar competencias.',b:'Establecer reglas claras.',c:'Cambiar precedentes y consecuencias.',d:'Incrementar situaciones de fracaso.',ok:'C',r:'La correcta es C: Cambiar precedentes y consecuencias.. Evidencia: “principales focos de intervención se centran en: Cambiar los precedentes y las consecuencias de los comportamientos inapropiados para modificarlos. Establecer reglas claras y consistentes. Incrementar las oportunidades d...”',ref:'(M5, p. 60)'},
+    {id:7,p:'¿En qué se basa el diagnóstico del TDAH según el DSM-V?',a:'Trastorno del desarrollo neurológico.',b:'Falta de información específica.',c:'Hiperactividad.',d:'Déficit de atención.',ok:'A',r:'La correcta es A: Trastorno del desarrollo neurológico.. Evidencia: “de los trastornos de la categoría diagnóstica de los trastornos del desarrollo neurológico. La categoría de otro trastorno por déficit de atención con hiperactividad especificado se utiliza en situaciones en las que el c...”',ref:'(M5, p. 33)'},
+    {id:8,p:'¿Cuál es una técnica recomendada para aumentar la conducta deseada en niños con TDAH?',a:'Ambiente desorganizado.',b:'Castigo.',c:'Ignorar la conducta.',d:'Refuerzo positivo.',ok:'D',r:'La correcta es D: Refuerzo positivo.. Evidencia: “de mostrar una actitud tolerante, flexible y paciente. Los ejes para fomentar y aumentar las conductas deseadas son: la supervisión constante, que ayuda a prevenir y anticipar las situaciones que puedan representar un pr...”',ref:'(M5, p. 114)'},
+    {id:9,p:'¿Qué tipo de pruebas complementarias al diagnóstico del TDAH proporcionan más información acerca de la presencia y la intensidad del cuadro sintomático del trastorno?',a:'Pruebas clínicas y de evaluación cognitiva.',b:'Pruebas de Neuroimagen.',c:'Pruebas específicas de atención.',d:'Pruebas para evaluar las funciones ejecutivas.',ok:'A',r:'La correcta es A: Pruebas clínicas y de evaluación cognitiva.. Evidencia: “TDAH. 4. Pruebas e instrumentos para el proceso diagnóstico y eval(...) Pruebas complementarias A pesar de que no suelen ser necesarias para el diagnóstico de la hiperactividad, existen otro tipo de pruebas complementari...”',ref:'(M5, p. 49)'},
+    {id:10,p:'¿Cuál de los siguientes síntomas es característico del trastorno por déficit de atención con hiperactividad (TDAH) según el DSM-V?',a:'Dificultad para esperar su turno.',b:'Interrumpir o inmiscuirse con otros.',c:'Hablar excesivamente.',d:'Responder inesperadamente o antes de que se haya concluido una pregunta.',ok:'A',r:'La correcta es A: Dificultad para esperar su turno.. Evidencia: “nóstico e Intervención en TDAH [UDI151846] Trastorno de Déficit de Atención con Hiperactividad. 3. Síntomas asociados al TDAH en menores 3.2. Síntomas de hiperactividad Existen una serie de síntomas relacionados con la c...”',ref:'(M5, p. 12)'},
+    {id:11,p:'¿Por qué es necesario ponerse en contacto con la familia para verificar los comportamientos del niño con TDAH?',a:'Para obtener información sobre los hábitos académicos del niño.',b:'Para confirmar que el niño tiene buen comportamiento en casa.',c:'Para asegurarse de que el niño no tiene otros trastornos.',d:'Para verificar que los comportamientos se dan también en el hogar.',ok:'D',r:'La correcta es D: Para verificar que los comportamientos se dan también en el hogar.. Evidencia: “de TDAH, es necesario ponerse en contacto con la familia para verificar que los comportamientos se dan también en el hogar. Enunciado de la pregunta Uno de los principales problemas para la detección del TDAH mediante lo...”',ref:'(M5, p. 67)'},
+    {id:12,p:'¿Qué evalúa el BRIEF-P en el proceso diagnóstico y evaluativo del TDAH?',a:'Habilidades motoras.',b:'Habilidades lingüísticas.',c:'Funciones ejecutivas.',d:'Habilidades sociales.',ok:'C',r:'La correcta es C: Funciones ejecutivas.. Evidencia: “de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184J] Diagnóstico y evaluación del TDAH. 4. Pruebas e instrumentos para el proceso diagnóstico y ev...”',ref:'(M5, p. 45)'},
+    {id:13,p:'¿Cuáles son algunos de los síntomas de inatención que presentan los niños con TDAH?',a:'Rápida y precisa capacidad para procesar información.',b:'Dificultad para concentrarse en organizar y completar una tarea.',c:'Capacidad para seguir instrucciones sin problemas.',d:'Gran facilidad para percibir los detalles.',ok:'B',r:'La correcta es B: Dificultad para concentrarse en organizar y completar una tarea.. Evidencia: “o, lápices). Es decir, tienen problemas de memoria. Tienen gran dificultad para concentrarse en una sola cosa. Con frecuencia cambian de una actividad a otra, tras solo unos minutos debido a que se aburren con la activid...”',ref:'(M5, p. 11)'},
+    {id:14,p:'¿Qué evalúa el AGL, Atención Global-Local?',a:'Procesamiento de una fuente de información.',b:'Distribución de la atención en dos niveles.',c:'Mantenimiento de la atención ante estímulos relevantes.',d:'Rapidez y precisión perceptivas.',ok:'B',r:'La correcta es B: Distribución de la atención en dos niveles.. Evidencia: “ocal El AGL evalúa la Rapidez y precisión perceptivas en una tarea que exige la distribución de la atención en dos niveles de un estímulo visual: global y local. Es un instrumento especialmente indicado para la detección...”',ref:'(M5, p. 47)'},
+    {id:15,p:'¿Para qué edad está adaptada la versión del BRIEF-P?',a:'11-15 años.',b:'16-18 años.',c:'2-5 años.',d:'6-10 años.',ok:'C',r:'La correcta es C: 2-5 años.. Evidencia: “l de la Función Ejecutiva – Versión Infantil (BRIEF-P) es una versión del BRIEF adaptada a niños de 2 a 5 años. Permite la evaluación de los aspectos más cotidianos, conductuales y observables de las funciones ejecutivas...”',ref:'(M5, p. 46)'},
+    {id:16,p:'¿Qué es la asertividad en la comunicación efectiva?',a:'Expresar opiniones y proteger derechos.',b:'Evitar expresar desacuerdos.',c:'Agredir y someter a otras personas.',d:'No comunicarse con los demás.',ok:'A',r:'La correcta es A: Expresar opiniones y proteger derechos.. Evidencia: “s educativas para niños con TDAH. 2. Estrategias educativas para garantizar una comunicación efectiva La mejor manera de trabajar la comunicación efectiva es mediante: la comprensión empática, la estimación y el respeto,...”',ref:'(M5, p. 120)'},
+    {id:17,p:'¿Cuál es una de las características más visuales del niño o la niña con hiperactividad?',a:'Falta de atención.',b:'Falta de inhibición.',c:'Excesiva actividad motora.',d:'Impulsividad.',ok:'C',r:'La correcta es C: Excesiva actividad motora.. Evidencia: “Y] Dificultades asociadas al TDAH. 1. Dificultades asociadas al TDAH Una de las características más visuales del niño o la niña con hiperactividad es la excesiva actividad motora que demuestran, esta sobrepasa los límite...”',ref:'(M5, p. 82)'},
+    {id:18,p:'¿Cuál es el factor primario en el TDAH del cual derivan el resto de sus dificultades de aprendizaje, y de adaptación social, escolar y familiar?',a:'Excesiva actividad motora.',b:'Impulsividad.',c:'Falta de inhibición de la conducta.',d:'Falta de atención.',ok:'C',r:'La correcta es C: Falta de inhibición de la conducta.. Evidencia: “[AFO028VTC] Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184Y] Dificultades asociadas al TDAH. 1. D...”',ref:'(M5, p. 82)'},
+    {id:19,p:'¿Qué técnica puede ayudar a los niños con TDAH a controlar su conducta impulsiva?',a:'Role-playing.',b:'Relajación.',c:'Refuerzo directo.',d:'Modelado.',ok:'B',r:'La correcta es B: Relajación.. Evidencia: “ue le ha llevado a hacer la tortuga. Esta tercera parte de la secuencia TORTUGA-RELAJACION- SOLUCION DE PROBLEMAS se puede enseñar de distintas formas, en un grupo de discusión, contando una historia, modelando, haciendo...”',ref:'(M5, p. 129)'},
+    {id:20,p:'¿Qué impacto tiene la atención temprana del TDAH en el niño?',a:'Aumenta la clasificación como diferente.',b:'Aumenta el impacto en el entorno del niño.',c:'Disminuye el impacto de ser clasificado como diferente.',d:'Aumenta el daño emocional.',ok:'C',r:'La correcta es C: Disminuye el impacto de ser clasificado como diferente.. Evidencia: “un niño con problemas de conducta o de aprendizaje, en definitiva, como un niño diferente. Atención temprana: Principalmente, la atención temprana del TDAH disminuye el impacto que tiene sobre el niño que su entorno lo c...”',ref:'(M5, p. 61)'},
+    {id:21,p:'¿Cuáles son algunos indicadores que pueden producir la sospecha en los padres de que existe algún tipo de problema o trastorno en su hijo en el ámbito familiar?',a:'Habla y actúa sin pensar.',b:'Suele discutir sobre todo y contestar mal a lo que le dicen.',c:'No presta atención ni escucha cuando se le habla.',d:'Es desorganizado y despistado.',ok:'D',r:'La correcta es D: Es desorganizado y despistado.. Evidencia: “No presta atención ni escucha cuando se le habla. Habla y actúa sin pensar. Es desorganizado y despistado. Es impulsivo y pierde a menudo el control. Suele discutir sobre todo y contestar mal a lo que le dicen. A esto se...”',ref:'(M5, p. 28)'},
+    {id:22,p:'¿Cuáles son las estrategias educativas para fortalecer la autoestima en niños con TDAH?',a:'Entrenamiento asertivo.',b:'Estrategias para mejorar la comunicación afectiva.',c:'Técnicas para aumentar la conducta deseada.',d:'Estrategias educativas para fortalecer la autoestima.',ok:'D',r:'La correcta es D: Estrategias educativas para fortalecer la autoestima.. Evidencia: “réd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15185C] Estrategias educativas para niños con TDAH. 2. Estrategias educativas para fortalecer la autoestima Estrategias educativas para niños con TD...”',ref:'(M5, p. 117)'},
+    {id:23,p:'¿Cuál es el objetivo de la lectura comprensiva en las técnicas de estudio?',a:'Sacar las ideas principales del texto.',b:'Aclarar conceptos desconocidos.',c:'Subrayar las palabras clave.',d:'Entender el título del texto.',ok:'A',r:'La correcta es A: Sacar las ideas principales del texto.. Evidencia: “7.2. Lectura comprensiva En la lectura comprensiva se deben de sacar las ideas principales del texto. En ocasiones, se volverá a leer algún párrafo para comprender de qué está hablando. Cuando se entienda de que trata se...”',ref:'(M5, p. 105)'},
+    {id:24,p:'¿Cuál es una estrategia recomendada para mejorar la autoestima de los niños con TDAH?',a:'Retirar el amor como castigo.',b:'Comparar con otros.',c:'Exigir más de sus posibilidades.',d:'Mostrar cariño a pesar de la conducta.',ok:'D',r:'La correcta es D: Mostrar cariño a pesar de la conducta.. Evidencia: “réd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15185C] Estrategias educativas para niños con TDAH. 2. Estrategias educativas para fortalecer la autoestima otorguen los miembros cercanos de la fam...”',ref:'(M5, p. 118)'},
+    {id:25,p:'¿Cuál es una consideración importante al aplicar la técnica de extinción de conductas en niños con TDAH?',a:'Realizar la extinción en un lugar atractivo.',b:'Evitar cualquier tipo de refuerzo durante la aplicación.',c:'Aplicar extinción cuando la conducta suponga un peligro.',d:'Asegurarse de que el niño esté solo.',ok:'B',r:'La correcta es B: Evitar cualquier tipo de refuerzo durante la aplicación.. Evidencia: “ucativa en TDAH. 3. Técnicas y herramientas de modificación de conducta Para su aplicación debe de tenerse en cuenta: Elogiar conductas concretas: se deberá de decir exactamente la conducta que ha hecho bien el niño para...”',ref:'(M5, p. 115)'},
+    {id:26,p:'¿Por qué es fundamental la preparación del docente en materia de TDAH?',a:'Para evitar el fracaso escolar.',b:'Para alcanzar los objetivos establecidos.',c:'Para mejorar la adaptación general.',d:'Para reconocer necesidades especiales.',ok:'C',r:'La correcta es C: Para mejorar la adaptación general.. Evidencia: “cabo dentro del aula. Razón por la que se hace tanto hincapié en la formación y preparación de los docentes en materia de TDAH. Preparación del docente: Una buena preparación es fundamental para poder reconocer de forma ...”',ref:'(M5, p. 108)'},
+    {id:27,p:'¿Cuál es el enfoque principal para realizar el diagnóstico clínico del TDAH?',a:'Historia de tratamientos psiquiátricos previos.',b:'Análisis genético y pruebas neurológicas.',c:'Valoración escolar y antecedentes familiares.',d:'Entrevista clínica y exploración física.',ok:'D',r:'La correcta es D: Entrevista clínica y exploración física.. Evidencia: “de los padres. Debe valorarse la información obtenida del ámbito escolar, y la exploración física del niño. Han de evaluarse también los antecedentes familiares (dadas las influencias genéticas del trastorno) y el funcio...”',ref:'(M5, p. 25)'},
+    {id:28,p:'¿Cuáles son los componentes del BASC, Sistema de Evaluación de la Conducta de Niños y Adolescentes?',a:'Autoinforme, cuestionario para padres, cuestionario para tutores, sistema de observación del estudiante.',b:'Autoinforme, cuestionario para tutores, historia estructurada del desarrollo, sistema de observación del estudiante.',c:'Autoinforme, cuestionario para padres, historia estructurada del desarrollo, sistema de observación del estudiante.',d:'Autoinforme, cuestionario para padres, cuestionario para tutores, historia estructurada del desarrollo.',ok:'C',r:'La correcta es C: Autoinforme, cuestionario para padres, historia estructurada del desarrollo, sistema de observación del estudiante.. Evidencia: “peractividad (TDAH). 4.3. BASC. Sistema de Evaluación de la Conducta de Niños y Adolescentes El BASC es multimétodo puesto que tiene cinco componentes que valoran al sujeto desde diferentes perspectivas y pueden ser util...”',ref:'(M5, p. 43)'},
+    {id:29,p:'¿Qué factores se deben tener en cuenta al elegir la forma de administración del medicamento para el TDAH?',a:'La marca del medicamento.',b:'La preferencia del médico.',c:'La edad del niño.',d:'La existencia de otros problemas asociados.',ok:'D',r:'La correcta es D: La existencia de otros problemas asociados.. Evidencia: “AH [UDI151846] Trastorno de Déficit de Atención con Hiperactividad. 3. Síntomas asociados al TDAH en menores Trastorno de Déficit de Atención con Hiperactividad. 3. Síntomas asociados al TDAH en menores Los principales s...”',ref:'(M5, p. 11)'},
+    {id:30,p:'¿Cuáles son las dificultades asociadas al TDAH en la comprensión lectora?',a:'Errores de omisión y comisión.',b:'Falta de vocabulario.',c:'Dificultades en la comprensión oral.',d:'Problemas en la articulación del habla.',ok:'A',r:'La correcta es A: Errores de omisión y comisión.. Evidencia: “[AFO028VTC] Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184Y] Dificultades asociadas al TDAH. 1. D...”',ref:'(M5, p. 85)'},
+  ],
+  [
+    {id:1,p:'¿Cuál es una recomendación para mejorar el estudio de los niños con TDAH?',a:'Ser desconstante en el trabajo.',b:'Reforzar solo los resultados.',c:'No reforzar el esfuerzo.',d:'Ser constante en el trabajo.',ok:'D',r:'La correcta es D: Ser constante en el trabajo.. Evidencia: “tudio, ayudando a conseguir un mayor éxito escolar y autoestima. Algunas de las recomendaciones para mejorar el estudio de los niños con TDAH son: Ser constante en el trabajo, a pesar de que el niño pierda constantemente...”',ref:'(M5, p. 107)'},
+    {id:2,p:'¿Qué dificultades suelen aparecer en niños con TDAH al trabajar en grupo?',a:'Desinhibición del comportamiento.',b:'Falta de motivación.',c:'Desorganización.',d:'Conflictos con compañeros.',ok:'D',r:'La correcta es D: Conflictos con compañeros.. Evidencia: “[AFO028VTC] Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184Y] Dificultades asociadas al TDAH. 1. D...”',ref:'(M5, p. 89)'},
+    {id:3,p:'¿Cuál es una estrategia para el control de la conducta en niños con TDAH?',a:'Ignorar la conducta problemática.',b:'Utilizar reforzadores materiales.',c:'Utilizar el lenguaje negativo.',d:'Castigar al niño.',ok:'A',r:'La correcta es A: Ignorar la conducta problemática.. Evidencia: “portamientos que queremos que se den con mayor frecuencia. Se trata de la mejor estrategia para el control de la conducta, ya que genera respecto y autoestima. ueca.euroinnova.com 1 / 3...”',ref:'(M5, p. 114)'},
+    {id:4,p:'¿Cuál es el porcentaje de riesgo de presentar abuso de sustancias en la adolescencia en personas con TDAH?',a:'50-60%',b:'12-24%',c:'5-10%',d:'30-40%',ok:'B',r:'La correcta es B: 12-24%. Evidencia: “por abuso de drogas El riesgo en el TDAH de presentar abuso de sustancias en la adolescencia es del 12 al 24%. Estos trastornos se presentan con frecuencia más tempranamente y duran más, que en personas que no ueca.euroi...”',ref:'(M5, p. 50)'},
+    {id:5,p:'¿Cuál es una recomendación para la intervención en el aula de un alumno con TDAH?',a:'Establecer reglas y límites que no entiendan.',b:'Situarse en las últimas filas del aula.',c:'Fraccionar las tareas para lograr que el niño las realice con éxito.',d:'Centrarse en la materia a tratar.',ok:'C',r:'La correcta es C: Fraccionar las tareas para lograr que el niño las realice con éxito.. Evidencia: “H. 4. Intervención en el aula En este apartado se recogen una serie de pautas o recomendaciones generales de intervención en la escuela. No es necesario que el profesor las realice todas, pero en la medida en que se impl...”',ref:'(M5, p. 71)'},
+    {id:6,p:'¿Cuáles son algunos de los efectos desfavorables del TDAH en el desempeño académico?',a:'Desarrollo social y emocional.',b:'Falta de atención y desobediencia.',c:'Éxito vocacional.',d:'Baja frecuencia de síntomas depresivos.',ok:'B',r:'La correcta es B: Falta de atención y desobediencia.. Evidencia: “casa, la escuela o el contexto social. Estas disfunciones pueden causar efectos desfavorables en el desempeño académico, el éxito vocacional y el desarrollo social y emocional. Existe un alto riesgo de otro tipo de compo...”',ref:'(M5, p. 62)'},
+    {id:7,p:'¿Cuál es uno de los factores determinantes del TDAH según el texto?',a:'Factores sociales.',b:'Factores psicológicos.',c:'Factores ambientales.',d:'Factores genéticos.',ok:'D',r:'La correcta es D: Factores genéticos.. Evidencia: “AH [UDI151845] Trastorno de Déficit de Atención con Hiperactividad. 2. Factores determinantes Trastorno de Déficit de Atención con Hiperactividad. 2. Factores determinantes Según el tema que nos ocupa, hemos diferenciado...”',ref:'(M5, p. 7)'},
+    {id:8,p:'¿Qué se recomienda hacer en caso de cambio de última hora en el calendario de actividades?',a:'Cambiar el calendario sin avisar.',b:'No hacer nada al respecto.',c:'Informar al alumno.',d:'No informar al alumno.',ok:'C',r:'La correcta es C: Informar al alumno.. Evidencia: “a los niños, para favorecer la descarga de estimulación. Hacer un calendario de actividades lo más predecible posible y ponerlo en lugar visible. Ante cambio de última hora, informar al alumno. Establecer un sistema de r...”',ref:'(M5, p. 71)'},
+    {id:9,p:'¿Cuál es un factor genético relacionado con el TDAH?',a:'Consumo de tabaco durante la gestación.',b:'Receptores DR4 y DR5',c:'Prematuridad.',d:'Traumatismos craneoencefálicos en la primera infancia.',ok:'B',r:'La correcta es B: Receptores DR4 y DR5. Evidencia: “[UDI15184B] Introducción al diagnóstico clínico del TDAH. 2. Factores de riesgo relacionados con el TDAH independientes realizados en gemelos, se ha comprobado que la heredabilidad del TDAH es del 76% (Faraone et al., 20...”',ref:'(M5, p. 21)'},
+    {id:10,p:'¿Cuál es el objetivo de la asociación ABUDAH?',a:'Proporcionar recomendaciones a padres.',b:'Brindar apoyo a profesionales de la educación.',c:'Ofrecer tratamiento médico para el TDAH.',d:'Promover la integración social de los niños con TDAH.',ok:'A',r:'La correcta es A: Proporcionar recomendaciones a padres.. Evidencia: “ractividad. ABUDAH: El objetivo de esta asociación es proporcionar una serie de recomendaciones para ayudar a padres de hijos con TDAH, a controlar y canalizar, adecuadamente, los síntomas del trastorno. Los objetivos qu...”',ref:'(M5, p. 75)'},
+    {id:11,p:'¿Por qué es fundamental realizar un examen médico en niños con problemas de atención?',a:'Para determinar el coeficiente intelectual.',b:'Para detectar problemas de audición.',c:'Para identificar problemas emocionales.',d:'Para evaluar la capacidad cognitiva.',ok:'B',r:'La correcta es B: Para detectar problemas de audición.. Evidencia: “nico del TDAH. 1. Dimensiones y modelos cognitivos del TDAH El examen médico es fundamental, porque puede darse el caso de niños con problemas auditivos que presente problemas de atención. En consecuencia, esta inatenció...”',ref:'(M5, p. 19)'},
+    {id:12,p:'¿Cuál es el objetivo de la atención psicoeducativa integral en TDAH?',a:'Excluir a los niños con TDAH de la educación.',b:'Segregar a los niños con TDAH.',c:'Favorecer la integración en el aula ordinaria.',d:'Integrar a los niños con TDAH en aulas especiales.',ok:'C',r:'La correcta es C: Favorecer la integración en el aula ordinaria.. Evidencia: “[MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184S] Atención psicoeducativa integral en TDAH. 1. La atención psicoeducativa integral Atención psicoeducativa integral en TDAH. 1. La atención psicoeducat...”',ref:'(M5, p. 65)'},
+    {id:13,p:'¿Para qué sirve la escala EACP-AE?',a:'Evaluar conductas prototípicas.',b:'Evaluar síntomas del TDAH.',c:'Evaluar la hiperactividad.',d:'Evaluar el rendimiento académico.',ok:'D',r:'La correcta es D: Evaluar el rendimiento académico.. Evidencia: “irve para evaluar problemas en el desarrollo infantil como el ajuste social, el rendimiento académico, la atención y la ansiedad. Tiene una versión para padres y otra para tutores. CONNER Es una escala para padres o prof...”',ref:'(M5, p. 48)'},
+    {id:14,p:'¿Cuántos síntomas de inatención se requieren para el diagnóstico de TDAH en adolescentes mayores y adultos?',a:'Siete.',b:'Ocho.',c:'Seis.',d:'Cinco.',ok:'D',r:'La correcta es D: Cinco.. Evidencia: “ión, desafío, hostilidad o fracaso para comprender tareas o instrucciones. Para adolescentes mayores y adultos (a partir de 17 años de edad), se requiere un mínimo de cinco síntomas. a. Con frecuencia juguetea con o golp...”',ref:'(M5, p. 32)'},
+    {id:15,p:'¿Cuántos síntomas de inatención se requieren para el diagnóstico de TDAH en adolescentes mayores y adultos?',a:'Cinco síntomas.',b:'Cuatro síntomas.',c:'Siete síntomas.',d:'Seis síntomas.',ok:'A',r:'La correcta es A: Cinco síntomas.. Evidencia: “ión, desafío, hostilidad o fracaso para comprender tareas o instrucciones. Para adolescentes mayores y adultos (a partir de 17 años de edad), se requiere un mínimo de cinco síntomas. a. Con frecuencia juguetea con o golp...”',ref:'(M5, p. 32)'},
+    {id:16,p:'¿Cuál es uno de los objetivos de la asociación mencionada en el texto?',a:'Promover la hiperactividad.',b:'Fomentar el aislamiento social.',c:'Defender derechos.',d:'Ignorar la existencia del trastorno.',ok:'C',r:'La correcta es C: Defender derechos.. Evidencia: “os/as con TDAH déficit de atención con o sin hiperactividad), constituidos cómo asociación desde principios del 2010 en la provincia de A Coruña. Trabajan de manera conjunta por un desarrollo digno y completo de sus hijo...”',ref:'(M5, p. 75)'},
+    {id:17,p:'¿Qué son las adaptaciones curriculares significativas?',a:'Modificaciones en la evaluación.',b:'Adecuación de objetivos y contenidos.',c:'Cambios en la temporalización.',d:'Introducción de contenidos de niveles anteriores.',ok:'B',r:'La correcta es B: Adecuación de objetivos y contenidos.. Evidencia: “incipio de significatividad Se trata de ajustar las adaptaciones desde las poco significativas a las más significativas. Principio de realidad Ser realistas en la adaptación curricular, teniendo en cuenta las capacidades...”',ref:'(M5, p. 96)'},
+    {id:18,p:'¿Qué dominio de la atención se activa cuando el estímulo es novedoso, atractivo o peligroso?',a:'Atención focalizada.',b:'Estado de alerta.',c:'Atención selectiva.',d:'Atención sostenida.',ok:'B',r:'La correcta es B: Estado de alerta.. Evidencia: “de activación primaria y se activa cuando el estímulo es novedoso, atractivo o peligroso. También se activa cuando hay que seguir órdenes. Atención focalizada: se trata de la habilidad para centrar la atención en un estí...”',ref:'(M5, p. 5)'},
+    {id:19,p:'Según Thomas Brown, ¿qué capacidades cognitivas complejas están afectadas en el TDAH?',a:'Todas las anteriores.',b:'Motivación.',c:'Regulación de las emociones.',d:'Funciones ejecutivas.',ok:'A',r:'La correcta es A: Todas las anteriores.. Evidencia: “interrelacionados entre sí. Thomas Brown también desarrolló un modelo sobre las capacidades cognitivas complejas que están afectadas en el TDAH. Además de las funciones ejecutivas, ya mencionadas por Barkley, Brown añade...”',ref:'(M5, p. 24)'},
+    {id:20,p:'¿Cuál es el primer paso para el diagnóstico clínico del TDAH?',a:'Observar el impacto funcional en las diferentes situaciones.',b:'Descartar trastornos médicos.',c:'Realizar pruebas de laboratorio.',d:'Valorar la cantidad e intensidad de los síntomas.',ok:'D',r:'La correcta es D: Valorar la cantidad e intensidad de los síntomas.. Evidencia: “de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184D] Introducción al diagnóstico clínico del TDAH. 4. El diagnóstico clínico Introducción al diagn...”',ref:'(M5, p. 25)'},
+    {id:21,p:'¿Quiénes deben participar en la atención integral de niños con TDAH?',a:'Solo la comunidad educativa.',b:'Solo los padres.',c:'Solo los profesores.',d:'Toda la comunidad educativa.',ok:'D',r:'La correcta es D: Toda la comunidad educativa.. Evidencia: “sa. Atención psicoeducativa: Para que exista una atención integral debe también participar la comunidad educativa. Toda la comunidad debe de tener el firme compromiso de atender a estos niños y favorecer su integración e...”',ref:'(M5, p. 65)'},
+    {id:22,p:'¿Cuál es uno de los objetivos de la Asociación Tinerfeña de Madres y Padres de Niños y Adolescentes con Déficit?',a:'Mejorar la calidad de vida de los pacientes.',b:'Promover el abuso de alcohol y drogas.',c:'Buscar la colaboración de centros educativos privados.',d:'Fomentar la exclusión social de las personas con TDAH.',ok:'A',r:'La correcta es A: Mejorar la calidad de vida de los pacientes.. Evidencia: “ociación. 5.1.5. ATIMANA-DAH Asociación Tinerfeña de Madres y Padres de Niños y Adolescentes con Déficit de Atención e Hiperactividad. Esta asociación, plantea los siguientes objetivos: Defender los derechos y mejorar la...”',ref:'(M5, p. 77)'},
+    {id:23,p:'¿Cuáles son los errores más comunes de escritura que presentan los niños con TDAH?',a:'Uniones de letras.',b:'Fragmentaciones.',c:'Adición de letras, sílabas y palabras.',d:'Caligrafía pobre y desorganizada.',ok:'C',r:'La correcta es C: Adición de letras, sílabas y palabras.. Evidencia: “[Elemento Multimedia]]] 2.2. Escritura Los errores más comunes de escritura que presentan los niños que padecen un déficit de atención con hiperactividad son: Uniones de letras. Por ejemplo: “Salí aver al perro al jardín...”',ref:'(M5, p. 92)'},
+    {id:24,p:'¿Cuál es uno de los principales objetivos del tratamiento multimodal para el TDAH?',a:'Paliar las consecuencias del trastorno.',b:'Diagnosticar las patologías asociadas al TDAH.',c:'Normalizar los síntomas.',d:'Intervenir solo en el tratamiento farmacológico.',ok:'C',r:'La correcta es C: Normalizar los síntomas.. Evidencia: “réd(...) [MOD0249KP] Evaluación, Diagnóstico e Intervención en TDAH [UDI15184L] Tratamiento de TDAH. 1. Tratamientos para el TDAH Tratamiento de TDAH. 1. Tratamientos para el TDAH Tratamiento: El tratamiento del déficit ...”',ref:'(M5, p. 53)'},
+    {id:25,p:'¿Cuál es el papel fundamental del profesor en el aula con respecto a los alumnos con TDAH?',a:'Crear un ambiente desestructurado.',b:'Servir de modelo de comportamiento.',c:'Ignorar el comportamiento del alumno.',d:'Impartir clases motivadoras.',ok:'B',r:'La correcta es B: Servir de modelo de comportamiento.. Evidencia: “ias educativas para niños con TDAH. 3. Estrategias educativas para conseguir un comportamiento apropiado El papel del profesor en el aula es fundamental, pero especialmente lo será cuando haya alumnos con TDAH, puesto qu...”',ref:'(M5, p. 124)'},
+    {id:26,p:'¿Cuál es uno de los principios a tener en cuenta para la realización de una adaptación curricular?',a:'Principio de rigidez.',b:'Principio de individualización.',c:'Principio de uniformidad.',d:'Principio de flexibilidad.',ok:'B',r:'La correcta es B: Principio de individualización.. Evidencia: “urrículum adquiere una flexibilidad y adaptabilidad que lo hacen único. Para la realización de una adaptación curricular cuya finalidad es dar una respuesta educativa a las necesidades de los estudiantes se deben de tene...”',ref:'(M5, p. 96)'},
+    {id:27,p:'¿Qué tipo de formación es fundamental para el profesorado en el contexto del TDAH?',a:'Formación en historia.',b:'Formación en matemáticas.',c:'Formación en técnicas de modificación de conducta.',d:'Formación en idiomas.',ok:'C',r:'La correcta es C: Formación en técnicas de modificación de conducta.. Evidencia: “mnado se realiza de forma más eficiente y rápida. Además se podrán realizar las modificaciones apropiadas para mejorar su adaptación general dentro del aula y que puedan alcanzar los objetivos establecidos, sin que por e...”',ref:'(M5, p. 109)'},
+    {id:28,p:'¿Cuáles son algunas de las consecuencias del TDAH en el ámbito familiar?',a:'Vida social activa.',b:'Niveles de estrés reducidos.',c:'Frecuencia baja de separaciones entre los padres.',d:'Sensación de soledad y abandono.',ok:'D',r:'La correcta es D: Sensación de soledad y abandono.. Evidencia: “gnóstico e Intervención en TDAH [UDI15184R] Tratamiento de TDAH. 6. Principales consecuencias del TDAH en niños Tratamiento de TDAH. 6. Principales consecuencias del TDAH en niños Generalmente, los niños y niñas diagnost...”',ref:'(M5, p. 62)'},
+    {id:29,p:'¿Qué dificultad asociada al TDAH se refiere a una escasa agilidad y velocidad en los movimientos linguales?',a:'Problemas en el acceso rápido a información lingüística.',b:'Menos competencia en tareas de procesamiento semántico.',c:'Bajos resultados en pruebas.',d:'Dispraxia.',ok:'D',r:'La correcta es D: Dispraxia.. Evidencia: “omina dispraxia o torpeza motora. Existe una escasa agilidad y velocidad en los movimientos linguales de estos menores, lo que conducirá a la imposibilidad para repetir el mismo movimiento de la misma forma y a un lengua...”',ref:'(M5, p. 84)'},
+    {id:30,p:'¿Cuál es el manual diagnóstico utilizado por los profesionales para el diagnóstico de trastornos mentales, incluyendo el TDAH?',a:'APA.',b:'DSM-IV.',c:'TDAH.',d:'DSM-V.',ok:'D',r:'La correcta es D: DSM-V.. Evidencia: “ón Americana de Psiquiatría (APA) que sirve como referencia y guía a médicos, a profesionales de la salud mental y a otros profesionales clínicos de la salud para el diagnóstico de trastornos mentales. En este manual se ...”',ref:'(M5, p. 30)'},
+  ],
+];
+let currentSim=0,currentQ=0,answers=[];
+const LABELS=['A','B','C','D'],KEYS=['a','b','c','d'];
+const ICONS=['📖','✏️','🧠','📝','🎯'];
+
+function getScores(){try{return JSON.parse(localStorage.getItem('m5_scores')||'{}');}catch{return{};}}
+function saveScore(i,pct){const s=getScores();s[i]=pct;localStorage.setItem('m5_scores',JSON.stringify(s));}
+
+function renderHome(){
+  const scores=getScores(),grid=document.getElementById('simGrid');
+  grid.innerHTML='';
+  SIMS.forEach((sim,i)=>{
+    const card=document.createElement('div');
+    card.className='sim-card';card.onclick=()=>startQuiz(i);
+    let badge='';
+    if(scores[i]!==undefined){
+      const p=scores[i],cls=p>=70?'pass':p>=50?'partial':'fail';
+      badge=`<div class="sim-score-badge shown ${cls}">${p}% — ${p>=70?'✓ Aprobado':p>=50?'~ En progreso':'✗ A mejorar'}</div>`;
+    }
+    card.innerHTML=`<div class="sim-icon">${ICONS[i]}</div><div class="sim-num">Simulacro 0${i+1}</div><div class="sim-label">Módulo 5</div><div class="sim-count">${sim.length} preguntas · opción múltiple</div>${badge}`;
+    grid.appendChild(card);
+  });
+}
+
+function startQuiz(simIdx){
+  currentSim=simIdx;currentQ=0;answers=new Array(SIMS[simIdx].length).fill(null);
+  document.getElementById('home').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  document.getElementById('quizTitle').textContent=`Simulacro 0${simIdx+1} · Módulo 5`;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const sim=SIMS[currentSim],q=sim[currentQ];
+  const correct_so_far=answers.filter(a=>a&&a.correct).length;
+  document.getElementById('progressText').textContent=`Pregunta ${currentQ+1} de ${sim.length}`;
+  document.getElementById('scoreText').textContent=`${correct_so_far} correctas`;
+  document.getElementById('progressFill').style.width=((currentQ+1)/sim.length*100).toFixed(0)+'%';
+
+  const savedAns=answers[currentQ];
+  const opts=KEYS.map((k,i)=>{
+    let cls='';
+    if(savedAns){
+      const l=LABELS[i];
+      if(l===q.ok)cls=savedAns.selected===l?'selected-correct':'show-correct';
+      else if(l===savedAns.selected)cls='selected-wrong';
+    }
+    return `<button class="opt-btn ${cls}" onclick="selectAnswer('${LABELS[i]}')" ${savedAns?'disabled':''}><div class="opt-letter">${LABELS[i]}</div><div>${q[k]}</div></button>`;
+  }).join('');
+
+  let fb='';
+  if(savedAns)fb=`<div class="feedback-box ${savedAns.correct?'correct':'wrong'}" style="display:block"><strong>${savedAns.correct?'✅ ¡Correcto!':'❌ Respuesta incorrecta'}</strong><br>${q.r}<div class="feedback-ref">${q.ref}</div></div>`;
+
+  const isLast=currentQ===sim.length-1;
+  const prevBtn=currentQ>0?`<button class="btn-secondary" onclick="goToPrev()">← Anterior</button>`:`<div></div>`;
+
+  document.getElementById('qWrap').innerHTML=`
+    <div class="q-card fade-in">
+      <div class="q-number">Pregunta ${currentQ+1}</div>
+      <div class="q-text">${q.p}</div>
+      <div class="options">${opts}</div>${fb}
+    </div>
+    <div class="quiz-actions">
+      ${prevBtn}
+      <button class="btn-primary" onclick="goToNext()" ${!savedAns?'disabled':''}>${isLast?'🏁 Ver resultados':'Siguiente →'}</button>
+    </div>`;
+}
+
+function selectAnswer(letter){
+  if(answers[currentQ]!==null)return;
+  answers[currentQ]={selected:letter,correct:letter===SIMS[currentSim][currentQ].ok};
+  renderQuestion();
+}
+function goToNext(){
+  if(currentQ<SIMS[currentSim].length-1){currentQ++;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}
+  else showResults();
+}
+function goToPrev(){if(currentQ>0){currentQ--;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}}
+
+function showResults(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  const sim=SIMS[currentSim],total=sim.length;
+  const correct=answers.filter(a=>a&&a.correct).length;
+  const pct=Math.round(correct/total*100);
+  saveScore(currentSim,pct);
+  const cls=pct>=70?'pass':pct>=50?'partial':'fail';
+  const msg=pct>=70?'¡Excelente trabajo!':pct>=50?'Buen intento, sigue practicando':'Necesitas repasar más';
+  document.getElementById('scoreRing').className='results-score-ring '+cls;
+  document.getElementById('scorePct').className='score-pct '+cls;
+  document.getElementById('scorePct').textContent=pct+'%';
+  document.getElementById('resultsTitle').textContent=msg;
+  document.getElementById('resultsMeta').textContent=`Simulacro ${currentSim+1} · ${correct} de ${total} correctas`;
+  document.getElementById('statCorr').textContent=correct;
+  document.getElementById('statWrong').textContent=total-correct;
+  document.getElementById('statPct').textContent=pct+'%';
+
+  const list=document.getElementById('reviewList');list.innerHTML='';
+  sim.forEach((q,i)=>{
+    const ans=answers[i];if(!ans)return;
+    const div=document.createElement('div');
+    div.className='review-item '+(ans.correct?'correct':'wrong');
+    const myText=ans.correct?'':`<div class="review-item-ans">❌ Tu respuesta: <span class="my">${ans.selected}. ${q[ans.selected.toLowerCase()]}</span></div>`;
+    div.innerHTML=`<div class="review-item-q"><strong>${i+1}.</strong> ${q.p}</div>${myText}<div class="review-item-ans">${ans.correct?'✅':'✔'} Correcta: <span class="ok">${q.ok}. ${q[q.ok.toLowerCase()]}</span></div><div class="review-item-retro">${q.r} <em>${q.ref}</em></div>`;
+    list.appendChild(div);
+  });
+}
+
+function retryQuiz(){startQuiz(currentSim);}
+function goHome(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('home').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  renderHome();
+}
+renderHome();
+</script>
+</body>
+</html>
